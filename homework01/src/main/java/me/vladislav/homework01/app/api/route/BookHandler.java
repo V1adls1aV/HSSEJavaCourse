@@ -1,13 +1,13 @@
 package me.vladislav.homework01.app.api.route;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import me.vladislav.homework01.app.dto.api.request.BookCreateRequest;
 import me.vladislav.homework01.app.dto.api.response.BookGetResponse;
 import me.vladislav.homework01.app.service.BookService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
 
 @RestController
 @RequestMapping("/api/book")
@@ -19,14 +19,18 @@ public class BookHandler {
   }
 
   @PutMapping("/user/{userId}")
-  public void addBookForUser(@PathVariable Long userId, @RequestBody BookCreateRequest book) {
+  public ResponseEntity<Void> addBookForUser(
+      @PathVariable Long userId, @RequestBody BookCreateRequest book) {
     bookService.addNewBookForUser(userId, book);
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   @GetMapping("/user/{userId}")
-  public List<BookGetResponse> getBooksForUser(@PathVariable Long userId) {
-    return bookService.getBooksForUser(userId).stream()
-        .map(book -> new BookGetResponse(book.id(), book.title(), book.author()))
-        .collect(Collectors.toList());
+  public ResponseEntity<List<BookGetResponse>> getBooksForUser(@PathVariable Long userId) {
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(
+            bookService.getBooksForUser(userId).stream()
+                .map(book -> new BookGetResponse(book.id(), book.title(), book.author()))
+                .collect(Collectors.toList()));
   }
 }

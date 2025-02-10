@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -29,9 +30,9 @@ public class EndToEndTest {
     @Test
     public void testFullUserFlow() {
         // Create a user
-        UserCreateRequest userRequest = new UserCreateRequest("vladislav", "verystrongpassword228");
+        UserCreateRequest userRequest = new UserCreateRequest("vladislav", "me@vladislav.ru");
         ResponseEntity<Long> createUserResponse = restTemplate.postForEntity("/api/user/", userRequest, Long.class);
-        assertTrue(createUserResponse.getStatusCode().is2xxSuccessful());
+        assertTrue(createUserResponse.getStatusCode().isSameCodeAs(HttpStatus.CREATED));
         Long userId = createUserResponse.getBody();
         assertNotNull(userId);
 

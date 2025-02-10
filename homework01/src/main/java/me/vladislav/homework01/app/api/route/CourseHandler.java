@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 import me.vladislav.homework01.app.dto.api.request.CourseCreateRequest;
 import me.vladislav.homework01.app.dto.api.response.CourseGetResponse;
 import me.vladislav.homework01.app.service.CourseService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,19 +19,25 @@ public class CourseHandler {
   }
 
   @PutMapping("/user/{userId}")
-  public void addCourseForUser(@PathVariable Long userId, @RequestBody CourseCreateRequest course) {
+  public ResponseEntity<Void> addCourseForUser(
+      @PathVariable Long userId, @RequestBody CourseCreateRequest course) {
     courseService.addNewCourseForUser(userId, course);
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   @GetMapping("/user/{userId}")
-  public List<CourseGetResponse> getCoursesForUser(@PathVariable Long userId) {
-    return courseService.getCoursesForUser(userId).stream()
-        .map(course -> new CourseGetResponse(
-            course.id(),
-            course.title(),
-            course.author(),
-            course.description(),
-            course.duration()))
-        .collect(Collectors.toList());
+  public ResponseEntity<List<CourseGetResponse>> getCoursesForUser(@PathVariable Long userId) {
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(
+            courseService.getCoursesForUser(userId).stream()
+                .map(
+                    course ->
+                        new CourseGetResponse(
+                            course.id(),
+                            course.title(),
+                            course.author(),
+                            course.description(),
+                            course.duration()))
+                .collect(Collectors.toList()));
   }
 }

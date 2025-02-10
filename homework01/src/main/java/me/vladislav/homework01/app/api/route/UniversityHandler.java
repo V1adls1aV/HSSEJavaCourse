@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 import me.vladislav.homework01.app.dto.api.request.UniversityCreateRequest;
 import me.vladislav.homework01.app.dto.api.response.UniversityGetResponse;
 import me.vladislav.homework01.app.service.UniversityService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,20 +19,26 @@ public class UniversityHandler {
   }
 
   @PutMapping("/user/{userId}")
-  public void addUniversityForUser(
+  public ResponseEntity<Void> addUniversityForUser(
       @PathVariable Long userId, @RequestBody UniversityCreateRequest university) {
     universityService.addNewUniversityForUser(userId, university);
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   @GetMapping("/user/{userId}")
-  public List<UniversityGetResponse> getUniversitiesForUser(@PathVariable Long userId) {
-    return universityService.getUniversitiesForUser(userId).stream()
-        .map(university -> new UniversityGetResponse(
-            university.id(),
-            university.name(),
-            university.city(),
-            university.description(),
-            university.rateKrutosty()))
-        .collect(Collectors.toList());
+  public ResponseEntity<List<UniversityGetResponse>> getUniversitiesForUser(
+      @PathVariable Long userId) {
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(
+            universityService.getUniversitiesForUser(userId).stream()
+                .map(
+                    university ->
+                        new UniversityGetResponse(
+                            university.id(),
+                            university.name(),
+                            university.city(),
+                            university.description(),
+                            university.rateKrutosty()))
+                .collect(Collectors.toList()));
   }
 }

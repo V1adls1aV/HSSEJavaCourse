@@ -1,4 +1,6 @@
 package me.vladislav.homework01.app.dto.api.request;
 
-public record UniversityCreateRequest(String name, String city, String description, Integer rateKrutosty) {
+import jakarta.validation.constraints.NotNull;
+
+public record UniversityCreateRequest(@NotNull String name, @NotNull String city, String description, @NotNull Integer rateKrutosty) {
 }
