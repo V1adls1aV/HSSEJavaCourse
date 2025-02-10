@@ -5,7 +5,6 @@ import me.vladislav.homework01.app.db.repository.user.UserRepository;
 import me.vladislav.homework01.app.dto.api.request.UniversityCreateRequest;
 import me.vladislav.homework01.app.dto.service.University;
 import me.vladislav.homework01.app.dto.service.UniversityData;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,7 +16,6 @@ public class UniversityService {
     private final UserRepository userRepository;
     private final UniversityRepository universityRepository;
 
-    @Autowired
     public UniversityService(UniversityRepository universityRepository, UserRepository userRepository) {
         this.universityRepository = universityRepository;
         this.userRepository = userRepository;

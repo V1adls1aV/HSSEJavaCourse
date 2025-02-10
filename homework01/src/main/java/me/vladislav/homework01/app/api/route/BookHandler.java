@@ -3,7 +3,6 @@ package me.vladislav.homework01.app.api.route;
 import me.vladislav.homework01.app.dto.api.request.BookCreateRequest;
 import me.vladislav.homework01.app.dto.api.response.BookGetResponse;
 import me.vladislav.homework01.app.service.BookService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,7 +14,6 @@ import java.util.stream.Collectors;
 public class BookHandler {
   private final BookService bookService;
 
-  @Autowired
   public BookHandler(BookService bookService) {
     this.bookService = bookService;
   }

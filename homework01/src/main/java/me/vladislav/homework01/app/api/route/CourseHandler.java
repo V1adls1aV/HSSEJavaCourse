@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 import me.vladislav.homework01.app.dto.api.request.CourseCreateRequest;
 import me.vladislav.homework01.app.dto.api.response.CourseGetResponse;
 import me.vladislav.homework01.app.service.CourseService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 public class CourseHandler {
   private final CourseService courseService;
 
-  @Autowired
   public CourseHandler(CourseService courseService) {
     this.courseService = courseService;
   }

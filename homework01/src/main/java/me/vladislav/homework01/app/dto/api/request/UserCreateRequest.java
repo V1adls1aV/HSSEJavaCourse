@@ -1,4 +1,7 @@
 package me.vladislav.homework01.app.dto.api.request;
 
-public record UserCreateRequest(String username, String email) {
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+
+public record UserCreateRequest(@NotNull String username, @Email @NotNull String email) {
 }

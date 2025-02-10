@@ -60,7 +60,7 @@ public class EndToEndTest {
         ResponseEntity<UserGetResponse> userResponse = restTemplate.getForEntity("/api/user/" + userId, UserGetResponse.class);
         assertTrue(userResponse.getStatusCode().is2xxSuccessful());
         assertNotNull(userResponse.getBody());
-        assertEquals("testUser", userResponse.getBody().username());
+        assertEquals("vladislav", userResponse.getBody().username());
 
         // Get books
         ResponseEntity<List<BookGetResponse>> booksResponse = restTemplate.exchange(

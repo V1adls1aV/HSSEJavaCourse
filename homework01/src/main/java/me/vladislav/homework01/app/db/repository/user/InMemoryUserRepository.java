@@ -1,16 +1,17 @@
 package me.vladislav.homework01.app.db.repository.user;
 
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.atomic.AtomicLong;
+import lombok.extern.slf4j.Slf4j;
 import me.vladislav.homework01.app.core.exception.db.repository.UserNotFoundException;
 import me.vladislav.homework01.app.dto.service.User;
 import me.vladislav.homework01.app.dto.service.UserData;
 import org.springframework.stereotype.Repository;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.atomic.AtomicLong;
-
+@Slf4j
 @Repository
 public class InMemoryUserRepository implements UserRepository {
   private static final Map<Long, User> storage = new ConcurrentHashMap<>();
@@ -19,26 +20,31 @@ public class InMemoryUserRepository implements UserRepository {
   private static final Map<Long, Set<Long>> universityIds = new ConcurrentHashMap<>();
   private static final AtomicLong idGenerator = new AtomicLong(1L);
 
-  public InMemoryUserRepository() {
-
-  }
+  public InMemoryUserRepository() {}
 
   public Long create(UserData user) {
+    log.debug("Creating new user: {}", user.username());
     Long id = idGenerator.getAndIncrement();
     storage.put(id, new User(id, user.username(), user.email()));
+    log.debug("Created user with id: {}", id);
     return id;
   }
 
   public User getById(Long id) {
+    log.debug("Retrieving user with id: {}", id);
     User user = storage.get(id);
     if (user == null) {
+      log.error("User not found with id: {}", id);
       throw new UserNotFoundException();
     }
+    log.debug("Found user: {}", user.username());
     return user;
   }
 
   public void addBookId(Long userId, Long bookId) {
+    log.debug("Adding book {} to user {}", bookId, userId);
     if (!storage.containsKey(userId)) {
+      log.error("User not found with id: {}", userId);
       throw new UserNotFoundException();
     }
 
@@ -49,14 +55,21 @@ public class InMemoryUserRepository implements UserRepository {
     } else {
       bookIds.get(userId).add(bookId);
     }
+    log.debug("Successfully added book {} to user {}", bookId, userId);
   }
 
   public Set<Long> getBooksIds(Long userId) {
+    log.debug("Retrieving books for user: {}", userId);
     if (!storage.containsKey(userId)) {
+      log.error("User not found with id: {}", userId);
       throw new UserNotFoundException();
     }
     Set<Long> books = bookIds.get(userId);
-    if (books == null) {return Set.of();}
+    if (books == null) {
+      log.debug("No books found for user: {}", userId);
+      return Set.of();
+    }
+    log.debug("Found {} books for user {}", books.size(), userId);
     return books;
   }
 
