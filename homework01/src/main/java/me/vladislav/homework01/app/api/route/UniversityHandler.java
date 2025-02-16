@@ -2,6 +2,8 @@ package me.vladislav.homework01.app.api.route;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import jakarta.validation.Valid;
 import me.vladislav.homework01.app.dto.api.request.UniversityCreateRequest;
 import me.vladislav.homework01.app.dto.api.response.UniversityGetResponse;
 import me.vladislav.homework01.app.service.UniversityService;
@@ -20,7 +22,7 @@ public class UniversityHandler {
 
   @PutMapping("/user/{userId}")
   public ResponseEntity<Void> addUniversityForUser(
-      @PathVariable Long userId, @RequestBody UniversityCreateRequest university) {
+      @PathVariable Long userId, @Valid @RequestBody UniversityCreateRequest university) {
     universityService.addNewUniversityForUser(userId, university);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }

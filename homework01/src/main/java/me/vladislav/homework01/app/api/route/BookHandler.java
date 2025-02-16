@@ -2,6 +2,8 @@ package me.vladislav.homework01.app.api.route;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import jakarta.validation.Valid;
 import me.vladislav.homework01.app.dto.api.request.BookCreateRequest;
 import me.vladislav.homework01.app.dto.api.response.BookGetResponse;
 import me.vladislav.homework01.app.service.BookService;
@@ -20,7 +22,7 @@ public class BookHandler {
 
   @PutMapping("/user/{userId}")
   public ResponseEntity<Void> addBookForUser(
-      @PathVariable Long userId, @RequestBody BookCreateRequest book) {
+      @PathVariable Long userId, @Valid @RequestBody BookCreateRequest book) {
     bookService.addNewBookForUser(userId, book);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }

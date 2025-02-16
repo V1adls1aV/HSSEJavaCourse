@@ -1,13 +1,15 @@
 package me.vladislav.homework01.app.api.route;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import jakarta.validation.Valid;
 import me.vladislav.homework01.app.dto.api.request.CourseCreateRequest;
 import me.vladislav.homework01.app.dto.api.response.CourseGetResponse;
 import me.vladislav.homework01.app.service.CourseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/course")
@@ -20,7 +22,7 @@ public class CourseHandler {
 
   @PutMapping("/user/{userId}")
   public ResponseEntity<Void> addCourseForUser(
-      @PathVariable Long userId, @RequestBody CourseCreateRequest course) {
+      @PathVariable Long userId, @Valid @RequestBody CourseCreateRequest course) {
     courseService.addNewCourseForUser(userId, course);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }

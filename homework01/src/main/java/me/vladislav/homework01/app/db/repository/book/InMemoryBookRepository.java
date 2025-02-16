@@ -29,7 +29,6 @@ public class InMemoryBookRepository implements BookRepository {
     log.debug("Retrieving book with id: {}", id);
     Book book = storage.get(id);
     if (book == null) {
-      log.error("Book not found with id: {}", id);
       throw new BookNotFoundException();
     }
     log.debug("Found book: {} by {}", book.title(), book.author());

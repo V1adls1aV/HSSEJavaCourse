@@ -1,3 +1,21 @@
 package me.vladislav.homework01.app.dto.api.response;
 
-public record UniversityGetResponse(Long id, String name, String city, String description, Integer rateKrutosty) {}
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+public record UniversityGetResponse(
+    @NotNull
+    Long id,
+
+    @NotBlank
+    @Size(min = 3, max = 50)
+    String name,
+
+    @NotBlank
+    @Size(min = 3, max = 50)
+    String city,
+
+    String description,
+
+    Integer rateKrutosty) {}
