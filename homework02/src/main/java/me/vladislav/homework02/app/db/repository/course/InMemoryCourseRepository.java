@@ -1,13 +1,14 @@
 package me.vladislav.homework02.app.db.repository.course;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 import lombok.extern.slf4j.Slf4j;
 import me.vladislav.homework02.app.core.exception.db.repository.CourseNotFoundException;
 import me.vladislav.homework02.app.dto.service.Course;
 import me.vladislav.homework02.app.dto.service.CourseData;
 import org.springframework.stereotype.Repository;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
 @Repository
@@ -49,9 +50,6 @@ public class InMemoryCourseRepository implements CourseRepository {
 
   public void delete(Long id) {
     log.debug("Deleting course with id: {}", id);
-    if (!storage.containsKey(id)) {
-      throw new CourseNotFoundException();
-    }
     storage.remove(id);
     log.debug("Deleted course with id: {}", id);
   }

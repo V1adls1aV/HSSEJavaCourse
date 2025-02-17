@@ -1,13 +1,14 @@
 package me.vladislav.homework02.app.db.repository.book;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 import lombok.extern.slf4j.Slf4j;
-import me.vladislav.homework02.app.core.exception.db.repository.BookNotFoundException;
 import me.vladislav.homework02.app.dto.service.Book;
 import me.vladislav.homework02.app.dto.service.BookData;
 import org.springframework.stereotype.Repository;
+
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
 @Repository
@@ -17,41 +18,40 @@ public class InMemoryBookRepository implements BookRepository {
 
   public InMemoryBookRepository() {}
 
-  public Long create(BookData book) {
+  public Book create(BookData book) {
     log.debug("Creating new book: {} by {}", book.title(), book.author());
     Long id = idGenerator.getAndIncrement();
-    storage.put(id, new Book(id, book.title(), book.author()));
+    Book newBook = new Book(id, book.title(), book.author());
+    storage.put(id, newBook);
     log.debug("Created book with id: {}", id);
-    return id;
+    return newBook;
   }
 
-  public Book getById(Long id) {
+  public Optional<Book> getById(Long id) {
     log.debug("Retrieving book with id: {}", id);
     Book book = storage.get(id);
-    if (book == null) {
-      throw new BookNotFoundException();
+    if (book != null) {
+      log.debug("Found book: {} by {}", book.title(), book.author());
+    } else {
+      log.debug("No book found with id: {}", id);
     }
-    log.debug("Found book: {} by {}", book.title(), book.author());
-    return book;
+    return Optional.ofNullable(book);
   }
 
   @Override
-  public Book update(Book book) {
+  public Optional<Book> update(Book book) {
     log.debug("Updating book with id: {}", book.id());
     if (!storage.containsKey(book.id())) {
-      throw new BookNotFoundException();
+      return Optional.empty();
     }
     storage.put(book.id(), book);
     log.debug("Updated book: {} by {}", book.title(), book.author());
-    return book;
+    return Optional.of(book);
   }
 
   @Override
   public void delete(Long id) {
     log.debug("Deleting book with id: {}", id);
-    if (!storage.containsKey(id)) {
-      throw new BookNotFoundException();
-    }
     storage.remove(id);
     log.debug("Deleted book with id: {}", id);
   }

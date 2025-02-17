@@ -40,12 +40,12 @@ public interface BookControllerAnnotation {
       @Parameter(description = "User ID") @PathVariable Long userId,
       @Parameter(description = "Book data") @Valid @RequestBody BookCreateRequest book);
 
-  @Operation(summary = "Update book for user")
+  @Operation(summary = "Update book for user. If book does not exist, creates it and returns the actual book with supplied content.")
   @ApiResponse(
       responseCode = "200",
       description = "Book updated successfully",
       content = @Content(schema = @Schema(implementation = BookGetResponse.class)))
-  @ApiResponse(responseCode = "404", description = "User or book not found")
+  @ApiResponse(responseCode = "404", description = "User not found")
   @ApiResponse(responseCode = "422", description = "Invalid input")
   ResponseEntity<BookGetResponse> updateBookForUser(
       @Parameter(description = "User ID") @PathVariable Long userId,
