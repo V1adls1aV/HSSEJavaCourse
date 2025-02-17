@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/course")
+@RequestMapping("/api/user/{userId}/course")
 public class CourseHandler {
   private final CourseService courseService;
 
@@ -20,14 +20,14 @@ public class CourseHandler {
     this.courseService = courseService;
   }
 
-  @PutMapping("/user/{userId}")
+  @PostMapping
   public ResponseEntity<Void> addCourseForUser(
       @PathVariable Long userId, @Valid @RequestBody CourseCreateRequest course) {
     courseService.addNewCourseForUser(userId, course);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
-  @GetMapping("/user/{userId}")
+  @GetMapping
   public ResponseEntity<List<CourseGetResponse>> getCoursesForUser(@PathVariable Long userId) {
     return ResponseEntity.status(HttpStatus.OK)
         .body(

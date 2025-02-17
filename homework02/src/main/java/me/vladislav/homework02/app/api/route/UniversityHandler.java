@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/university")
+@RequestMapping("/api/user/{userId}/university")
 public class UniversityHandler {
   private final UniversityService universityService;
 
@@ -20,14 +20,14 @@ public class UniversityHandler {
     this.universityService = universityService;
   }
 
-  @PutMapping("/user/{userId}")
+  @PostMapping
   public ResponseEntity<Void> addUniversityForUser(
       @PathVariable Long userId, @Valid @RequestBody UniversityCreateRequest university) {
     universityService.addNewUniversityForUser(userId, university);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
-  @GetMapping("/user/{userId}")
+  @GetMapping
   public ResponseEntity<List<UniversityGetResponse>> getUniversitiesForUser(
       @PathVariable Long userId) {
     return ResponseEntity.status(HttpStatus.OK)

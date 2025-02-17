@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/book")
+@RequestMapping("/api/user/{userId}/book")
 public class BookHandler {
   private final BookService bookService;
 
@@ -20,14 +20,14 @@ public class BookHandler {
     this.bookService = bookService;
   }
 
-  @PutMapping("/user/{userId}")
+  @PostMapping
   public ResponseEntity<Void> addBookForUser(
       @PathVariable Long userId, @Valid @RequestBody BookCreateRequest book) {
     bookService.addNewBookForUser(userId, book);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
-  @GetMapping("/user/{userId}")
+  @GetMapping
   public ResponseEntity<List<BookGetResponse>> getBooksForUser(@PathVariable Long userId) {
     return ResponseEntity.status(HttpStatus.OK)
         .body(

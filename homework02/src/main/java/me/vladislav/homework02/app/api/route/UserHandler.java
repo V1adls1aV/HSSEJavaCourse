@@ -34,7 +34,7 @@ public class UserHandler {
       responseCode = "422",
       description = "Invalid input"
   )
-  @PostMapping("/")
+  @PostMapping
   public ResponseEntity<Long> createUser(@Valid @RequestBody UserCreateRequest request) {
     return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(request));
   }
