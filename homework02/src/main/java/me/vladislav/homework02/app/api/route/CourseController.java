@@ -1,8 +1,7 @@
 package me.vladislav.homework02.app.api.route;
 
-import jakarta.validation.Valid;
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import me.vladislav.homework02.app.api.route.annotation.CourseControllerAnnotation;
 import me.vladislav.homework02.app.dto.api.request.CourseCreateRequest;
 import me.vladislav.homework02.app.dto.api.request.CoursePatchRequest;
 import me.vladislav.homework02.app.dto.api.request.CourseUpdateRequest;
@@ -12,18 +11,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("/api/user/{userId}/course")
-public class CourseHandler {
-  private final CourseService courseService;
+import java.util.List;
+import java.util.stream.Collectors;
 
-  public CourseHandler(CourseService courseService) {
-    this.courseService = courseService;
-  }
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/user/{userId}/course")
+public class CourseController implements CourseControllerAnnotation {
+  private final CourseService courseService;
 
   @PostMapping
   public ResponseEntity<CourseGetResponse> addCourseForUser(
-      @PathVariable Long userId, @Valid @RequestBody CourseCreateRequest course) {
+      Long userId, CourseCreateRequest course) {
     var createdCourse = courseService.addNewCourseForUser(userId, course);
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(
@@ -36,7 +35,7 @@ public class CourseHandler {
   }
 
   @GetMapping
-  public ResponseEntity<List<CourseGetResponse>> getCoursesForUser(@PathVariable Long userId) {
+  public ResponseEntity<List<CourseGetResponse>> getCoursesForUser(Long userId) {
     return ResponseEntity.status(HttpStatus.OK)
         .body(
             courseService.getCoursesForUser(userId).stream()
@@ -53,7 +52,7 @@ public class CourseHandler {
 
   @PutMapping
   public ResponseEntity<CourseGetResponse> updateCourseForUser(
-      @PathVariable Long userId, @Valid @RequestBody CourseUpdateRequest course) {
+      Long userId, CourseUpdateRequest course) {
     var updatedCourse = courseService.updateCourseForUser(userId, course);
     return ResponseEntity.status(HttpStatus.OK)
         .body(
@@ -67,7 +66,7 @@ public class CourseHandler {
 
   @PatchMapping
   public ResponseEntity<CourseGetResponse> partiallyUpdateCourseForUser(
-      @PathVariable Long userId, @Valid @RequestBody CoursePatchRequest course) {
+      Long userId, CoursePatchRequest course) {
     var updatedCourse = courseService.partiallyUpdateCourseForUser(userId, course);
     return ResponseEntity.status(HttpStatus.OK)
         .body(
@@ -81,7 +80,7 @@ public class CourseHandler {
 
   @DeleteMapping("/{courseId}")
   public ResponseEntity<CourseGetResponse> deleteCourseForUser(
-      @PathVariable Long userId, @PathVariable Long courseId) {
+      Long userId, Long courseId) {
     var deletedCourse = courseService.deleteCourseForUser(userId, courseId);
     return ResponseEntity.status(HttpStatus.OK)
         .body(

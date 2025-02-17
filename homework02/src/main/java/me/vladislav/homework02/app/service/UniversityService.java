@@ -1,5 +1,6 @@
 package me.vladislav.homework02.app.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.vladislav.homework02.app.db.repository.university.UniversityRepository;
 import me.vladislav.homework02.app.db.repository.user.UserRepository;
@@ -13,14 +14,10 @@ import java.util.Set;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class UniversityService {
   private final UserRepository userRepository;
   private final UniversityRepository universityRepository;
-
-  public UniversityService(UniversityRepository universityRepository, UserRepository userRepository) {
-    this.universityRepository = universityRepository;
-    this.userRepository = userRepository;
-  }
 
   public void addNewUniversityForUser(Long userId, UniversityCreateRequest university) {
     log.info("Adding new university for user {}", userId);

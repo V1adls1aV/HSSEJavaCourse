@@ -1,8 +1,6 @@
 package me.vladislav.homework02.app.service;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.vladislav.homework02.app.core.exception.db.repository.BookNotFoundException;
 import me.vladislav.homework02.app.db.repository.book.BookRepository;
@@ -14,16 +12,16 @@ import me.vladislav.homework02.app.dto.service.Book;
 import me.vladislav.homework02.app.dto.service.BookData;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class BookService {
   private final UserRepository userRepository;
   private final BookRepository bookRepository;
-
-  public BookService(BookRepository bookRepository, UserRepository userRepository) {
-    this.bookRepository = bookRepository;
-    this.userRepository = userRepository;
-  }
 
   public Book addNewBookForUser(Long userId, BookCreateRequest book) {
     log.info("Adding new book '{}' by {} for user {}", book.title(), book.author(), userId);

@@ -1,7 +1,5 @@
 package me.vladislav.homework02.app.core.exception;
 
-import java.util.HashMap;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import me.vladislav.homework02.app.core.exception.db.repository.CourseNotFoundException;
 import me.vladislav.homework02.app.core.exception.db.repository.UniversityNotFoundException;
@@ -10,6 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @ControllerAdvice
@@ -22,19 +23,19 @@ public class MainExceptionHandler {
 
   @ExceptionHandler
   public ResponseEntity<String> handle(UserNotFoundException e) {
-    log.error(e.getMessage());
+    log.warn(e.getMessage());
     return ResponseEntity.status(404).body(e.getMessage());
   }
 
   @ExceptionHandler
   public ResponseEntity<String> handle(CourseNotFoundException e) {
-    log.error(e.getMessage());
+    log.warn(e.getMessage());
     return ResponseEntity.status(404).body(e.getMessage());
   }
 
   @ExceptionHandler
   public ResponseEntity<String> handle(UniversityNotFoundException e) {
-    log.error(e.getMessage());
+    log.warn(e.getMessage());
     return ResponseEntity.status(404).body(e.getMessage());
   }
 

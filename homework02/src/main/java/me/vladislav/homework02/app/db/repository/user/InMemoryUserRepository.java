@@ -1,15 +1,16 @@
 package me.vladislav.homework02.app.db.repository.user;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.atomic.AtomicLong;
 import lombok.extern.slf4j.Slf4j;
 import me.vladislav.homework02.app.core.exception.db.repository.UserNotFoundException;
 import me.vladislav.homework02.app.dto.service.User;
 import me.vladislav.homework02.app.dto.service.UserData;
 import org.springframework.stereotype.Repository;
+
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
 @Repository
@@ -34,7 +35,6 @@ public class InMemoryUserRepository implements UserRepository {
     log.debug("Retrieving user with id: {}", id);
     User user = storage.get(id);
     if (user == null) {
-      log.error("User not found with id: {}", id);
       throw new UserNotFoundException();
     }
     log.debug("Found user: {}", user.username());
@@ -44,7 +44,6 @@ public class InMemoryUserRepository implements UserRepository {
   public void addBookId(Long userId, Long bookId) {
     log.debug("Adding book {} to user {}", bookId, userId);
     if (!storage.containsKey(userId)) {
-      log.error("User not found with id: {}", userId);
       throw new UserNotFoundException();
     }
 
@@ -61,7 +60,6 @@ public class InMemoryUserRepository implements UserRepository {
   public Set<Long> getBooksIds(Long userId) {
     log.debug("Retrieving books for user: {}", userId);
     if (!storage.containsKey(userId)) {
-      log.error("User not found with id: {}", userId);
       throw new UserNotFoundException();
     }
     Set<Long> books = bookIds.get(userId);

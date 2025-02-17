@@ -1,5 +1,6 @@
 package me.vladislav.homework02.app.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.vladislav.homework02.app.db.repository.user.UserRepository;
 import me.vladislav.homework02.app.dto.api.request.UserCreateRequest;
@@ -9,12 +10,9 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class UserService {
   private final UserRepository userRepository;
-
-  public UserService(UserRepository userRepository) {
-    this.userRepository = userRepository;
-  }
 
   public Long createUser(UserCreateRequest request) {
     log.info("Creating new user with username: {}", request.username());

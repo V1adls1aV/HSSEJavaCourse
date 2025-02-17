@@ -1,5 +1,6 @@
 package me.vladislav.homework02.app.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.vladislav.homework02.app.core.exception.db.repository.CourseNotFoundException;
 import me.vladislav.homework02.app.db.repository.course.CourseRepository;
@@ -17,14 +18,10 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class CourseService {
   private final UserRepository userRepository;
   private final CourseRepository courseRepository;
-
-  public CourseService(CourseRepository courseRepository, UserRepository userRepository) {
-    this.courseRepository = courseRepository;
-    this.userRepository = userRepository;
-  }
 
   public Course addNewCourseForUser(Long userId, CourseCreateRequest course) {
     log.info("Adding new course for user {}", userId);
