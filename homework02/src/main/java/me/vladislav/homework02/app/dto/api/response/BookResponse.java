@@ -5,19 +5,16 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public record UniversityGetResponse(
+public record BookResponse(
     @NotNull
     @Min(1)
     Long id,
 
     @NotBlank
     @Size(min = 3, max = 50)
-    String name,
+    String title,
 
     @NotBlank
     @Size(min = 3, max = 50)
-    String city,
-
-    String description,
-
-    Integer rateKrutosty) {}
+    String author) {
+}

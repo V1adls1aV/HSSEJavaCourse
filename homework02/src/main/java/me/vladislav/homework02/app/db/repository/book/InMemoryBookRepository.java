@@ -34,4 +34,25 @@ public class InMemoryBookRepository implements BookRepository {
     log.debug("Found book: {} by {}", book.title(), book.author());
     return book;
   }
+
+  @Override
+  public Book update(Book book) {
+    log.debug("Updating book with id: {}", book.id());
+    if (!storage.containsKey(book.id())) {
+      throw new BookNotFoundException();
+    }
+    storage.put(book.id(), book);
+    log.debug("Updated book: {} by {}", book.title(), book.author());
+    return book;
+  }
+
+  @Override
+  public void delete(Long id) {
+    log.debug("Deleting book with id: {}", id);
+    if (!storage.containsKey(id)) {
+      throw new BookNotFoundException();
+    }
+    storage.remove(id);
+    log.debug("Deleted book with id: {}", id);
+  }
 }
