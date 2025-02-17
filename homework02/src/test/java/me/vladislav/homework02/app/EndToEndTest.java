@@ -1,11 +1,8 @@
 package me.vladislav.homework02.app;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import jakarta.annotation.PostConstruct;
-import java.util.List;
 import me.vladislav.homework02.app.dto.api.request.*;
-import me.vladislav.homework02.app.dto.api.response.BookResponse;
+import me.vladislav.homework02.app.dto.api.response.BookGetResponse;
 import me.vladislav.homework02.app.dto.api.response.CourseGetResponse;
 import me.vladislav.homework02.app.dto.api.response.UniversityGetResponse;
 import me.vladislav.homework02.app.dto.api.response.UserGetResponse;
@@ -20,10 +17,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class EndToEndTest {
 
-  @Autowired private TestRestTemplate restTemplate;
+  @Autowired
+  private TestRestTemplate restTemplate;
 
   @PostConstruct
   public void setUp() {
@@ -46,12 +48,12 @@ public class EndToEndTest {
 
     assertTrue(
         restTemplate
-            .postForEntity("/api/user/" + userId + "/book", book1, BookResponse.class)
+            .postForEntity("/api/user/" + userId + "/book", book1, BookGetResponse.class)
             .getStatusCode()
             .is2xxSuccessful());
     assertTrue(
         restTemplate
-            .postForEntity("/api/user/" + userId + "/book", book2, BookResponse.class)
+            .postForEntity("/api/user/" + userId + "/book", book2, BookGetResponse.class)
             .getStatusCode()
             .is2xxSuccessful());
 
@@ -96,14 +98,15 @@ public class EndToEndTest {
     assertEquals("vladislav", userResponse.getBody().username());
 
     // Get books
-    ResponseEntity<List<BookResponse>> booksResponse =
+    ResponseEntity<List<BookGetResponse>> booksResponse =
         restTemplate.exchange(
             "/api/user/" + userId + "/book",
             HttpMethod.GET,
             null,
-            new ParameterizedTypeReference<>() {});
+            new ParameterizedTypeReference<>() {
+            });
     assertTrue(booksResponse.getStatusCode().is2xxSuccessful());
-    List<BookResponse> books = booksResponse.getBody();
+    List<BookGetResponse> books = booksResponse.getBody();
     assertNotNull(books);
     assertEquals(2, books.size());
     assertTrue(books.stream().anyMatch(b -> b.title().equals("The Lord of the Rings")));
@@ -115,7 +118,8 @@ public class EndToEndTest {
             "/api/user/" + userId + "/course",
             HttpMethod.GET,
             null,
-            new ParameterizedTypeReference<>() {});
+            new ParameterizedTypeReference<>() {
+            });
     assertTrue(coursesResponse.getStatusCode().is2xxSuccessful());
     List<CourseGetResponse> courses = coursesResponse.getBody();
     assertNotNull(courses);
@@ -129,7 +133,8 @@ public class EndToEndTest {
             "/api/user/" + userId + "/university",
             HttpMethod.GET,
             null,
-            new ParameterizedTypeReference<>() {});
+            new ParameterizedTypeReference<>() {
+            });
     assertTrue(universitiesResponse.getStatusCode().is2xxSuccessful());
     List<UniversityGetResponse> universities = universitiesResponse.getBody();
     assertNotNull(universities);
@@ -150,11 +155,11 @@ public class EndToEndTest {
 
     // Create a book
     BookCreateRequest createRequest = new BookCreateRequest("1984", "George");
-    ResponseEntity<BookResponse> createBookResponse =
+    ResponseEntity<BookGetResponse> createBookResponse =
         restTemplate.postForEntity(
-            "/api/user/" + userId + "/book", createRequest, BookResponse.class);
+            "/api/user/" + userId + "/book", createRequest, BookGetResponse.class);
     assertTrue(createBookResponse.getStatusCode().isSameCodeAs(HttpStatus.CREATED));
-    BookResponse createdBook = createBookResponse.getBody();
+    BookGetResponse createdBook = createBookResponse.getBody();
     assertNotNull(createdBook);
     assertEquals(createRequest.title(), createdBook.title());
     assertEquals(createRequest.author(), createdBook.author());
@@ -163,14 +168,14 @@ public class EndToEndTest {
     // Update the book
     BookUpdateRequest updateRequest =
         new BookUpdateRequest(createdBook.id(), "1984 - Updated", "George Orwell");
-    ResponseEntity<BookResponse> updateBookResponse =
+    ResponseEntity<BookGetResponse> updateBookResponse =
         restTemplate.exchange(
             "/api/user/" + userId + "/book",
             HttpMethod.PUT,
             new HttpEntity<>(updateRequest),
-            BookResponse.class);
+            BookGetResponse.class);
     assertTrue(updateBookResponse.getStatusCode().is2xxSuccessful());
-    BookResponse updatedBook = updateBookResponse.getBody();
+    BookGetResponse updatedBook = updateBookResponse.getBody();
     assertNotNull(updatedBook);
     assertEquals(updateRequest.title(), updatedBook.title());
     assertEquals(updateRequest.author(), updatedBook.author());
@@ -180,15 +185,15 @@ public class EndToEndTest {
     BookPatchRequest patchRequest =
         new BookPatchRequest(
             createdBook.id(), "1984 - Patched", null // Keep the original author
-            );
-    ResponseEntity<BookResponse> patchBookResponse =
+        );
+    ResponseEntity<BookGetResponse> patchBookResponse =
         restTemplate.exchange(
             "/api/user/" + userId + "/book",
             HttpMethod.PATCH,
             new HttpEntity<>(patchRequest),
-            BookResponse.class);
+            BookGetResponse.class);
     assertTrue(patchBookResponse.getStatusCode().is2xxSuccessful());
-    BookResponse patchedBook = patchBookResponse.getBody();
+    BookGetResponse patchedBook = patchBookResponse.getBody();
     assertNotNull(patchedBook);
     assertEquals(patchRequest.title(), patchedBook.title());
     // Check the author changed in previous request
@@ -196,24 +201,109 @@ public class EndToEndTest {
     assertEquals(createdBook.id(), patchedBook.id());
 
     // Delete the book
-    ResponseEntity<BookResponse> deleteBookResponse =
+    ResponseEntity<BookGetResponse> deleteBookResponse =
         restTemplate.exchange(
             "/api/user/" + userId + "/book/" + createdBook.id(),
             HttpMethod.DELETE,
             null,
-            BookResponse.class);
+            BookGetResponse.class);
     assertTrue(deleteBookResponse.getStatusCode().is2xxSuccessful());
 
     // Verify the book is deleted by trying to get all books
-    ResponseEntity<List<BookResponse>> getBooksResponse =
+    ResponseEntity<List<BookGetResponse>> getBooksResponse =
         restTemplate.exchange(
             "/api/user/" + userId + "/book",
             HttpMethod.GET,
             null,
-            new ParameterizedTypeReference<>() {});
+            new ParameterizedTypeReference<>() {
+            });
     assertTrue(getBooksResponse.getStatusCode().is2xxSuccessful());
-    List<BookResponse> books = getBooksResponse.getBody();
+    List<BookGetResponse> books = getBooksResponse.getBody();
     assertNotNull(books);
     assertTrue(books.isEmpty());
+  }
+
+  @Test
+  public void testCourseLifecycle() {
+    // Create a user first
+    UserCreateRequest userRequest = new UserCreateRequest("courseuser", "courses@test.com");
+    ResponseEntity<Long> createUserResponse =
+        restTemplate.postForEntity("/api/user", userRequest, Long.class);
+    assertTrue(createUserResponse.getStatusCode().isSameCodeAs(HttpStatus.CREATED));
+    Long userId = createUserResponse.getBody();
+    assertNotNull(userId);
+
+    // Create a course
+    CourseCreateRequest createRequest =
+        new CourseCreateRequest("Spring Boot", "MTS", "Learn Spring Boot", 40);
+    ResponseEntity<CourseGetResponse> createCourseResponse =
+        restTemplate.postForEntity(
+            "/api/user/" + userId + "/course", createRequest, CourseGetResponse.class);
+    assertTrue(createCourseResponse.getStatusCode().isSameCodeAs(HttpStatus.CREATED));
+    CourseGetResponse createdCourse = createCourseResponse.getBody();
+    assertNotNull(createdCourse);
+    assertEquals(createRequest.title(), createdCourse.title());
+    assertEquals(createRequest.author(), createdCourse.author());
+    assertNotNull(createdCourse.id());
+
+    // Update the course
+    CourseUpdateRequest updateRequest =
+        new CourseUpdateRequest(createdCourse.id(), "Spring Boot Advanced", "MTSSS",
+            "Advanced Spring Boot", 80);
+    ResponseEntity<CourseGetResponse> updateCourseResponse =
+        restTemplate.exchange(
+            "/api/user/" + userId + "/course",
+            HttpMethod.PUT,
+            new HttpEntity<>(updateRequest),
+            CourseGetResponse.class);
+    assertTrue(updateCourseResponse.getStatusCode().is2xxSuccessful());
+    CourseGetResponse updatedCourse = updateCourseResponse.getBody();
+    assertNotNull(updatedCourse);
+    assertEquals(updateRequest.title(), updatedCourse.title());
+    assertEquals(updateRequest.author(), updatedCourse.author());
+    assertEquals(createdCourse.id(), updatedCourse.id());
+
+    // Partially update the course
+    CoursePatchRequest patchRequest =
+        new CoursePatchRequest(
+            createdCourse.id(),
+            "Spring Boot Mastery",
+            null, // Keep the original author
+            null, // Keep the original description
+            100);
+    ResponseEntity<CourseGetResponse> patchCourseResponse =
+        restTemplate.exchange(
+            "/api/user/" + userId + "/course",
+            HttpMethod.PATCH,
+            new HttpEntity<>(patchRequest),
+            CourseGetResponse.class);
+    assertTrue(patchCourseResponse.getStatusCode().is2xxSuccessful());
+    CourseGetResponse patchedCourse = patchCourseResponse.getBody();
+    assertNotNull(patchedCourse);
+    assertEquals(patchRequest.title(), patchedCourse.title());
+    assertEquals(updateRequest.author(), patchedCourse.author());
+    assertEquals(createdCourse.id(), patchedCourse.id());
+
+    // Delete the course
+    ResponseEntity<CourseGetResponse> deleteCourseResponse =
+        restTemplate.exchange(
+            "/api/user/" + userId + "/course/" + createdCourse.id(),
+            HttpMethod.DELETE,
+            null,
+            CourseGetResponse.class);
+    assertTrue(deleteCourseResponse.getStatusCode().is2xxSuccessful());
+
+    // Verify the course is deleted by trying to get all courses
+    ResponseEntity<List<CourseGetResponse>> getCoursesResponse =
+        restTemplate.exchange(
+            "/api/user/" + userId + "/course",
+            HttpMethod.GET,
+            null,
+            new ParameterizedTypeReference<>() {
+            });
+    assertTrue(getCoursesResponse.getStatusCode().is2xxSuccessful());
+    List<CourseGetResponse> courses = getCoursesResponse.getBody();
+    assertNotNull(courses);
+    assertTrue(courses.isEmpty());
   }
 }

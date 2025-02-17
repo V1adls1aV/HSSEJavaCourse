@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public record BookResponse(
+public record BookGetResponse(
     @NotNull
     @Min(1)
     Long id,

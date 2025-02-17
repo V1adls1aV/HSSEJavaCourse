@@ -5,6 +5,7 @@ import me.vladislav.homework02.app.dto.service.CourseData;
 
 public interface CourseRepository {
   Long create(CourseData course);
-
   Course getById(Long id);
+  Course update(Course course);
+  void delete(Long id);
 }
