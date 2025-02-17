@@ -10,7 +10,8 @@ import jakarta.validation.Valid;
 import me.vladislav.homework02.app.dto.api.request.UserCreateRequest;
 import me.vladislav.homework02.app.dto.api.response.UserGetResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 
 @Tag(name = "User management")

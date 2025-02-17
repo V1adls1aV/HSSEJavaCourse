@@ -1,7 +1,14 @@
 package me.vladislav.homework02.app;
 
 import jakarta.annotation.PostConstruct;
-import me.vladislav.homework02.app.dto.api.request.*;
+import me.vladislav.homework02.app.dto.api.request.BookCreateRequest;
+import me.vladislav.homework02.app.dto.api.request.BookPatchRequest;
+import me.vladislav.homework02.app.dto.api.request.BookUpdateRequest;
+import me.vladislav.homework02.app.dto.api.request.CourseCreateRequest;
+import me.vladislav.homework02.app.dto.api.request.CoursePatchRequest;
+import me.vladislav.homework02.app.dto.api.request.CourseUpdateRequest;
+import me.vladislav.homework02.app.dto.api.request.UniversityCreateRequest;
+import me.vladislav.homework02.app.dto.api.request.UserCreateRequest;
 import me.vladislav.homework02.app.dto.api.response.BookGetResponse;
 import me.vladislav.homework02.app.dto.api.response.CourseGetResponse;
 import me.vladislav.homework02.app.dto.api.response.UniversityGetResponse;
@@ -19,7 +26,9 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class EndToEndTest {
