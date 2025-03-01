@@ -1,6 +1,7 @@
 package me.vladislav.homework02.app.core.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import me.vladislav.homework02.app.core.exception.db.repository.BookNotFoundException;
 import me.vladislav.homework02.app.core.exception.db.repository.CourseNotFoundException;
 import me.vladislav.homework02.app.core.exception.db.repository.UniversityNotFoundException;
 import me.vladislav.homework02.app.core.exception.db.repository.UserNotFoundException;
@@ -23,6 +24,12 @@ public class MainExceptionHandler {
 
   @ExceptionHandler
   public ResponseEntity<String> handle(UserNotFoundException e) {
+    log.warn(e.getMessage());
+    return ResponseEntity.status(404).body(e.getMessage());
+  }
+
+  @ExceptionHandler
+  public ResponseEntity<String> handle(BookNotFoundException e) {
     log.warn(e.getMessage());
     return ResponseEntity.status(404).body(e.getMessage());
   }
