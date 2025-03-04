@@ -10,4 +10,4 @@ logging:
   level:
     me:
       vladislav:
-        homework01: DEBUG
+        homework: DEBUG

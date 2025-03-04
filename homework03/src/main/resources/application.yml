@@ -7,7 +7,19 @@ logging:
   level:
     me:
       vladislav:
-        homework01: INFO
+        homework: INFO
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+        exclude: shutdown
+      base-path: /admin/actuator/
+  endpoint:
+    health:
+      show-details: always
 
 # OpenAPI/Swagger Configuration
 springdoc:
