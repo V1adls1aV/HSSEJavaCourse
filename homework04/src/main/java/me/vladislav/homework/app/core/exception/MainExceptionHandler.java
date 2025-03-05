@@ -1,10 +1,12 @@
 package me.vladislav.homework.app.core.exception;
 
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import lombok.extern.slf4j.Slf4j;
 import me.vladislav.homework.app.core.exception.db.repository.BookNotFoundException;
 import me.vladislav.homework.app.core.exception.db.repository.CourseNotFoundException;
 import me.vladislav.homework.app.core.exception.db.repository.UniversityNotFoundException;
 import me.vladislav.homework.app.core.exception.db.repository.UserNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -44,6 +46,12 @@ public class MainExceptionHandler {
   public ResponseEntity<String> handle(UniversityNotFoundException e) {
     log.warn(e.getMessage());
     return ResponseEntity.status(404).body(e.getMessage());
+  }
+
+  @ExceptionHandler(RequestNotPermitted.class)
+  public ResponseEntity<String> handleRequestNotPermitted(RequestNotPermitted e) {
+    return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+        .body("Rate limit exceeded. Please try again later.");
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
