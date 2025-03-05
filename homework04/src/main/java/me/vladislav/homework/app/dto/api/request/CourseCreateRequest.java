@@ -3,7 +3,10 @@ package me.vladislav.homework.app.dto.api.request;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
+import java.util.UUID;
 
 public record CourseCreateRequest(
     @NotBlank
@@ -17,5 +20,9 @@ public record CourseCreateRequest(
     String description,
 
     @Min(1) @Max(366)
-    Integer duration) {
+    Integer duration,
+
+    @NotNull
+    UUID operationId
+) {
 }

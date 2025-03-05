@@ -25,6 +25,7 @@ public interface CourseControllerAnnotation {
       responseCode = "201",
       description = "Course created successfully",
       content = @Content(schema = @Schema(implementation = CourseGetResponse.class)))
+  @ApiResponse(responseCode = "208", description = "Course is already created.")
   @ApiResponse(responseCode = "404", description = "User not found")
   @ApiResponse(responseCode = "422", description = "Invalid input")
   ResponseEntity<CourseGetResponse> addCourseForUser(

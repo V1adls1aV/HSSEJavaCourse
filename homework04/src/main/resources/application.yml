@@ -31,6 +31,15 @@ springdoc:
     operationsSorter: method
     tagsSorter: alpha
 
+server:
+  tomcat:
+    threads:
+      min-spare: 10
+      max: 50
+
 cache:
   expire-after-seconds: 300
   initial-capacity: 30
+
+requests:
+  timeout: 2000

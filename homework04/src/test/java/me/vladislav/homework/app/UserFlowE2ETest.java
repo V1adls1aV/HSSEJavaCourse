@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -66,9 +67,9 @@ public class UserFlowE2ETest {
 
     // Add courses
     CourseCreateRequest course1 =
-        new CourseCreateRequest("Java Programming", "MTS", "Basic Java", 40);
+        new CourseCreateRequest("Java Programming", "MTS", "Basic Java", 40, UUID.randomUUID());
     CourseCreateRequest course2 =
-        new CourseCreateRequest("Spring Framework", "MTS", "Spring basics", 30);
+        new CourseCreateRequest("Spring Framework", "MTS", "Spring basics", 30, UUID.randomUUID());
 
     assertTrue(
         restTemplate

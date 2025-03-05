@@ -11,6 +11,8 @@ import me.vladislav.homework.app.dto.api.request.BookUpdateRequest;
 import me.vladislav.homework.app.dto.service.Book;
 import me.vladislav.homework.app.dto.service.BookData;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,6 +49,12 @@ public class BookService {
     return books;
   }
 
+  /*
+   * Цель в данном случае – гарантировать обновление книги,
+   * ведь при больших объемах данных (и при AP модели базы данных (из CAP теоремы))
+   * запись может не успеть достичь той ноды базы данных, к которой мы обращаемся.
+   */
+  @Retryable(value = BookNotFoundException.class, maxAttempts = 5, backoff = @Backoff(delay = 10_000))
   public Book updateBookForUser(Long userId, BookUpdateRequest bookRequest) {
     log.info("Updating book {} for user {}", bookRequest.id(), userId);
     Book book = new Book(bookRequest.id(), bookRequest.title(), bookRequest.author());
@@ -56,6 +64,7 @@ public class BookService {
     return updatedBook;
   }
 
+  @Retryable(value = BookNotFoundException.class, maxAttempts = 5, backoff = @Backoff(delay = 10_000))
   public Book partiallyUpdateBookForUser(Long userId, BookPatchRequest bookRequest) {
     log.info("Partially updating book {} for user {}", bookRequest.id(), userId);
 

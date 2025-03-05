@@ -14,7 +14,11 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -23,14 +27,23 @@ import java.util.stream.Collectors;
 public class CourseService {
   private final UserRepository userRepository;
   private final CourseRepository courseRepository;
+  private final Set<UUID> processedIds = ConcurrentHashMap.newKeySet();
 
-  public Course addNewCourseForUser(Long userId, CourseCreateRequest course) {
+  /*
+   * Эта гарантия нужна для избежания дубликатов (создания курсов). Если же для обновления дубликат не критичен,
+   * то для создания – может повлиять на логику работы приложения в худшую сторону.
+   */
+  public Optional<Course> addNewCourseForUser(Long userId, CourseCreateRequest course) {
     log.info("Adding new course for user {}", userId);
-    Long courseId = courseRepository.create(new CourseData(course.title(), course.author(),
-        course.description(), course.duration()));
-    userRepository.addCourseId(userId, courseId);
-    log.info("Successfully added course with id {} for user {}", courseId, userId);
-    return courseRepository.getById(courseId);
+
+    if (processedIds.add(course.operationId())) {
+      Long courseId = courseRepository.create(new CourseData(course.title(), course.author(),
+          course.description(), course.duration()));
+      userRepository.addCourseId(userId, courseId);
+      log.info("Successfully added course with id {} for user {}", courseId, userId);
+      return Optional.of(courseRepository.getById(courseId));
+    }
+    return Optional.empty();
   }
 
   @Cacheable("CourseList")

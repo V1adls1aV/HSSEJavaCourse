@@ -6,6 +6,7 @@ import me.vladislav.homework.app.dto.api.request.CourseCreateRequest;
 import me.vladislav.homework.app.dto.api.request.CoursePatchRequest;
 import me.vladislav.homework.app.dto.api.request.CourseUpdateRequest;
 import me.vladislav.homework.app.dto.api.response.CourseGetResponse;
+import me.vladislav.homework.app.dto.service.Course;
 import me.vladislav.homework.app.service.CourseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -29,15 +31,20 @@ public class CourseController implements CourseControllerAnnotation {
   @PostMapping
   public ResponseEntity<CourseGetResponse> addCourseForUser(
       Long userId, CourseCreateRequest course) {
-    var createdCourse = courseService.addNewCourseForUser(userId, course);
-    return ResponseEntity.status(HttpStatus.CREATED)
+    Optional<Course> createdCourse = courseService.addNewCourseForUser(userId, course);
+    if (createdCourse.isPresent()) {
+      var presentCourse = createdCourse.get();
+      return ResponseEntity.status(HttpStatus.CREATED)
         .body(
             new CourseGetResponse(
-                createdCourse.id(),
-                createdCourse.title(),
-                createdCourse.author(),
-                createdCourse.description(),
-                createdCourse.duration()));
+                presentCourse.id(),
+                presentCourse.title(),
+                presentCourse.author(),
+                presentCourse.description(),
+                presentCourse.duration()));
+    } else {
+      return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).build();
+    }
   }
 
   @GetMapping

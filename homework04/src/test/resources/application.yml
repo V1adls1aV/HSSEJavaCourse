@@ -5,6 +5,10 @@ spring:
 
 server:
   port: 0  # Random port for testing
+  tomcat:
+    threads:
+      min-spare: 10
+      max: 50
 
 logging:
   level:

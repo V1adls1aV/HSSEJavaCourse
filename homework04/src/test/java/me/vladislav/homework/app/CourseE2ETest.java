@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -63,7 +64,7 @@ public class CourseE2ETest {
 
     // Create a course
     CourseCreateRequest createRequest =
-        new CourseCreateRequest("Spring Boot", "MTS", "Learn Spring Boot", 40);
+        new CourseCreateRequest("Spring Boot", "MTS", "Learn Spring Boot", 40, UUID.randomUUID());
     ResponseEntity<CourseGetResponse> createCourseResponse =
         restTemplate.postForEntity(
             "/api/user/" + userId + "/course", createRequest, CourseGetResponse.class);
