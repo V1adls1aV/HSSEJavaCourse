@@ -1,5 +1,6 @@
 package me.vladislav.homework.app.api.route;
 
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import me.vladislav.homework.app.api.route.annotation.BookControllerAnnotation;
 import me.vladislav.homework.app.dto.api.request.BookCreateRequest;
@@ -25,42 +26,53 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/user/{userId}/book")
 public class BookController implements BookControllerAnnotation {
   private final BookService bookService;
+  private final CircuitBreaker circuitBreaker = CircuitBreaker.ofDefaults("BookControllerCircuitBreaker");
 
   @GetMapping
   public ResponseEntity<List<BookGetResponse>> getBooksForUser(Long userId) {
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(
-            bookService.getBooksForUser(userId).stream()
-                .map(book -> new BookGetResponse(book.id(), book.title(), book.author()))
-                .collect(Collectors.toList()));
+    return circuitBreaker.executeSupplier(() -> {
+      return ResponseEntity.status(HttpStatus.OK)
+          .body(
+              bookService.getBooksForUser(userId).stream()
+                  .map(book -> new BookGetResponse(book.id(), book.title(), book.author()))
+                  .collect(Collectors.toList()));
+    });
   }
 
   @PostMapping
   public ResponseEntity<BookGetResponse> addBookForUser(Long userId, BookCreateRequest book) {
-    var createdBook = bookService.addNewBookForUser(userId, book);
-    return ResponseEntity.status(HttpStatus.CREATED)
-        .body(new BookGetResponse(createdBook.id(), createdBook.title(), createdBook.author()));
+    return circuitBreaker.executeSupplier(() -> {
+      var createdBook = bookService.addNewBookForUser(userId, book);
+      return ResponseEntity.status(HttpStatus.CREATED)
+          .body(new BookGetResponse(createdBook.id(), createdBook.title(), createdBook.author()));
+    });
   }
 
   @PutMapping
   public ResponseEntity<BookGetResponse> updateBookForUser(Long userId, BookUpdateRequest book) {
-    var updatedBook = bookService.updateBookForUser(userId, book);
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(new BookGetResponse(updatedBook.id(), updatedBook.title(), updatedBook.author()));
+    return circuitBreaker.executeSupplier(() -> {
+      var updatedBook = bookService.updateBookForUser(userId, book);
+      return ResponseEntity.status(HttpStatus.OK)
+          .body(new BookGetResponse(updatedBook.id(), updatedBook.title(), updatedBook.author()));
+    });
   }
 
   @PatchMapping
   public ResponseEntity<BookGetResponse> partiallyUpdateBookForUser(
       Long userId, BookPatchRequest book) {
-    var updatedBook = bookService.partiallyUpdateBookForUser(userId, book);
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(new BookGetResponse(updatedBook.id(), updatedBook.title(), updatedBook.author()));
+    return circuitBreaker.executeSupplier(() -> {
+      var updatedBook = bookService.partiallyUpdateBookForUser(userId, book);
+      return ResponseEntity.status(HttpStatus.OK)
+          .body(new BookGetResponse(updatedBook.id(), updatedBook.title(), updatedBook.author()));
+    });
   }
 
   @DeleteMapping("/{bookId}")
   public ResponseEntity<BookGetResponse> deleteBookForUser(Long userId, Long bookId) {
-    var deletedBook = bookService.deleteBookForUser(userId, bookId);
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(new BookGetResponse(deletedBook.id(), deletedBook.title(), deletedBook.author()));
+    return circuitBreaker.executeSupplier(() -> {
+      var deletedBook = bookService.deleteBookForUser(userId, bookId);
+      return ResponseEntity.status(HttpStatus.OK)
+          .body(new BookGetResponse(deletedBook.id(), deletedBook.title(), deletedBook.author()));
+    });
   }
 }

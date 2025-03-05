@@ -1,5 +1,6 @@
 package me.vladislav.homework.app.api.route;
 
+import io.github.resilience4j.ratelimiter.RateLimiter;
 import lombok.RequiredArgsConstructor;
 import me.vladislav.homework.app.api.route.annotation.UniversityControllerAnnotation;
 import me.vladislav.homework.app.dto.api.request.UniversityCreateRequest;
@@ -20,27 +21,33 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/user/{userId}/university")
 public class UniversityController implements UniversityControllerAnnotation {
   private final UniversityService universityService;
+  private final RateLimiter rateLimiter = RateLimiter.ofDefaults("UniversityControllerRateLimiter");
 
   @PostMapping
   public ResponseEntity<Void> addUniversityForUser(
       Long userId, UniversityCreateRequest university) {
-    universityService.addNewUniversityForUser(userId, university);
-    return ResponseEntity.status(HttpStatus.CREATED).build();
+    return rateLimiter.executeSupplier(() -> {
+          universityService.addNewUniversityForUser(userId, university);
+          return ResponseEntity.status(HttpStatus.CREATED).build();
+        }
+    );
   }
 
   @GetMapping
   public ResponseEntity<List<UniversityGetResponse>> getUniversitiesForUser(Long userId) {
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(
-            universityService.getUniversitiesForUser(userId).stream()
-                .map(
-                    university ->
-                        new UniversityGetResponse(
-                            university.id(),
-                            university.name(),
-                            university.city(),
-                            university.description(),
-                            university.rateKrutosty()))
-                .collect(Collectors.toList()));
+    return rateLimiter.executeSupplier(() -> {
+      return ResponseEntity.status(HttpStatus.OK)
+          .body(
+              universityService.getUniversitiesForUser(userId).stream()
+                  .map(
+                      university ->
+                          new UniversityGetResponse(
+                              university.id(),
+                              university.name(),
+                              university.city(),
+                              university.description(),
+                              university.rateKrutosty()))
+                  .collect(Collectors.toList()));
+    });
   }
 }

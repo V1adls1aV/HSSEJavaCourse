@@ -43,3 +43,29 @@ cache:
 
 requests:
   timeout: 2000
+
+resilience4j:
+  ratelimiter:
+    instances:
+      UniversityControllerRateLimiter:
+        limit-for-period: 5
+        limit-refresh-period: 5s
+        timeout-duration: 1s
+      CourseControllerRateLimiter:
+        limit-for-period: 5
+        limit-refresh-period: 5s
+        timeout-duration: 1s
+  circuitbreaker:
+    instances:
+      BookControllerCircuitBreaker:
+        failure-rate-threshold: 43
+        wait-duration-in-open-state: 20s
+        permitted-number-of-calls-in-half-open-state: 5
+        sliding-window-type: count_based
+        sliding-window-size: 20
+      CourseControllerCircuitBreaker:
+        failure-rate-threshold: 43
+        wait-duration-in-open-state: 20s
+        permitted-number-of-calls-in-half-open-state: 5
+        sliding-window-type: count_based
+        sliding-window-size: 20

@@ -1,5 +1,7 @@
 package me.vladislav.homework.app.api.route;
 
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.RateLimiter;
 import lombok.RequiredArgsConstructor;
 import me.vladislav.homework.app.api.route.annotation.CourseControllerAnnotation;
 import me.vladislav.homework.app.dto.api.request.CourseCreateRequest;
@@ -27,81 +29,93 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/user/{userId}/course")
 public class CourseController implements CourseControllerAnnotation {
   private final CourseService courseService;
+  private final CircuitBreaker circuitBreaker = CircuitBreaker.ofDefaults("CourseControllerCircuitBreaker");
+  private final RateLimiter rateLimiter = RateLimiter.ofDefaults("CourseControllerRateLimiter");
 
   @PostMapping
   public ResponseEntity<CourseGetResponse> addCourseForUser(
       Long userId, CourseCreateRequest course) {
-    Optional<Course> createdCourse = courseService.addNewCourseForUser(userId, course);
-    if (createdCourse.isPresent()) {
-      var presentCourse = createdCourse.get();
-      return ResponseEntity.status(HttpStatus.CREATED)
-        .body(
-            new CourseGetResponse(
-                presentCourse.id(),
-                presentCourse.title(),
-                presentCourse.author(),
-                presentCourse.description(),
-                presentCourse.duration()));
-    } else {
-      return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).build();
-    }
+    return circuitBreaker.executeSupplier(() -> rateLimiter.executeSupplier(() -> {
+      Optional<Course> createdCourse = courseService.addNewCourseForUser(userId, course);
+      if (createdCourse.isPresent()) {
+        var presentCourse = createdCourse.get();
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(
+                new CourseGetResponse(
+                    presentCourse.id(),
+                    presentCourse.title(),
+                    presentCourse.author(),
+                    presentCourse.description(),
+                    presentCourse.duration()));
+      } else {
+        return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).build();
+      }
+    }));
   }
 
   @GetMapping
   public ResponseEntity<List<CourseGetResponse>> getCoursesForUser(Long userId) {
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(
-            courseService.getCoursesForUser(userId).stream()
-                .map(
-                    course ->
-                        new CourseGetResponse(
-                            course.id(),
-                            course.title(),
-                            course.author(),
-                            course.description(),
-                            course.duration()))
-                .collect(Collectors.toList()));
+    return circuitBreaker.executeSupplier(() -> rateLimiter.executeSupplier(() -> {
+      return ResponseEntity.status(HttpStatus.OK)
+          .body(
+              courseService.getCoursesForUser(userId).stream()
+                  .map(
+                      course ->
+                          new CourseGetResponse(
+                              course.id(),
+                              course.title(),
+                              course.author(),
+                              course.description(),
+                              course.duration()))
+                  .collect(Collectors.toList()));
+    }));
   }
 
   @PutMapping
   public ResponseEntity<CourseGetResponse> updateCourseForUser(
       Long userId, CourseUpdateRequest course) {
-    var updatedCourse = courseService.updateCourseForUser(userId, course);
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(
-            new CourseGetResponse(
-                updatedCourse.id(),
-                updatedCourse.title(),
-                updatedCourse.author(),
-                updatedCourse.description(),
-                updatedCourse.duration()));
+    return circuitBreaker.executeSupplier(() -> rateLimiter.executeSupplier(() -> {
+      var updatedCourse = courseService.updateCourseForUser(userId, course);
+      return ResponseEntity.status(HttpStatus.OK)
+          .body(
+              new CourseGetResponse(
+                  updatedCourse.id(),
+                  updatedCourse.title(),
+                  updatedCourse.author(),
+                  updatedCourse.description(),
+                  updatedCourse.duration()));
+    }));
   }
 
   @PatchMapping
   public ResponseEntity<CourseGetResponse> partiallyUpdateCourseForUser(
       Long userId, CoursePatchRequest course) {
-    var updatedCourse = courseService.partiallyUpdateCourseForUser(userId, course);
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(
-            new CourseGetResponse(
-                updatedCourse.id(),
-                updatedCourse.title(),
-                updatedCourse.author(),
-                updatedCourse.description(),
-                updatedCourse.duration()));
+    return circuitBreaker.executeSupplier(() -> rateLimiter.executeSupplier(() -> {
+      var updatedCourse = courseService.partiallyUpdateCourseForUser(userId, course);
+      return ResponseEntity.status(HttpStatus.OK)
+          .body(
+              new CourseGetResponse(
+                  updatedCourse.id(),
+                  updatedCourse.title(),
+                  updatedCourse.author(),
+                  updatedCourse.description(),
+                  updatedCourse.duration()));
+    }));
   }
 
   @DeleteMapping("/{courseId}")
   public ResponseEntity<CourseGetResponse> deleteCourseForUser(
       Long userId, Long courseId) {
-    var deletedCourse = courseService.deleteCourseForUser(userId, courseId);
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(
-            new CourseGetResponse(
-                deletedCourse.id(),
-                deletedCourse.title(),
-                deletedCourse.author(),
-                deletedCourse.description(),
-                deletedCourse.duration()));
+    return circuitBreaker.executeSupplier(() -> rateLimiter.executeSupplier(() -> {
+      var deletedCourse = courseService.deleteCourseForUser(userId, courseId);
+      return ResponseEntity.status(HttpStatus.OK)
+          .body(
+              new CourseGetResponse(
+                  deletedCourse.id(),
+                  deletedCourse.title(),
+                  deletedCourse.author(),
+                  deletedCourse.description(),
+                  deletedCourse.duration()));
+    }));
   }
 }
