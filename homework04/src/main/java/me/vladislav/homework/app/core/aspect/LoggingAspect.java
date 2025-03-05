@@ -7,10 +7,13 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 @Aspect
 @Component
 @Slf4j
 public class LoggingAspect {
+  private AtomicLong callsCounter = new AtomicLong(0);
 
   @Before("execution(* me.vladislav.homework.app.api.route.*Controller.*(..))")
   public void logBeforeControllerMethods() {
@@ -20,6 +23,7 @@ public class LoggingAspect {
   @Around("execution(* me.vladislav.homework.app.api.route.*Controller.*(..))")
   public Object logAroundControllerMethods(ProceedingJoinPoint joinPoint) throws Throwable {
     long startTime = System.currentTimeMillis();
+    callsCounter.incrementAndGet();
 
     Object result = joinPoint.proceed();
 
@@ -29,7 +33,11 @@ public class LoggingAspect {
         joinPoint.getTarget().getClass().getSimpleName(),
         joinPoint.getSignature().getName(),
         (endTime - startTime));
-
+    callsCounter.incrementAndGet();
     return result;
+  }
+
+  public long getCallsCount() {
+    return callsCounter.get();
   }
 }
