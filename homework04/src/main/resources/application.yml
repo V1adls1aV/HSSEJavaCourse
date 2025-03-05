@@ -30,3 +30,7 @@ springdoc:
     use-root-path: true  # Wow, it's nice :)
     operationsSorter: method
     tagsSorter: alpha
+
+cache:
+  expire-after-seconds: 300
+  initial-capacity: 30

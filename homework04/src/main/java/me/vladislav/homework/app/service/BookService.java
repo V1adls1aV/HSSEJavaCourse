@@ -10,6 +10,7 @@ import me.vladislav.homework.app.dto.api.request.BookPatchRequest;
 import me.vladislav.homework.app.dto.api.request.BookUpdateRequest;
 import me.vladislav.homework.app.dto.service.Book;
 import me.vladislav.homework.app.dto.service.BookData;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,6 +33,7 @@ public class BookService {
     return newBook;
   }
 
+  @Cacheable("BookList")
   public List<Book> getBooksForUser(Long userId) {
     log.info("Retrieving books for user {}", userId);
     Set<Long> bookIds = userRepository.getBooksIds(userId);

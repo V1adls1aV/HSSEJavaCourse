@@ -10,6 +10,7 @@ import me.vladislav.homework.app.dto.api.request.CoursePatchRequest;
 import me.vladislav.homework.app.dto.api.request.CourseUpdateRequest;
 import me.vladislav.homework.app.dto.service.Course;
 import me.vladislav.homework.app.dto.service.CourseData;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,6 +33,7 @@ public class CourseService {
     return courseRepository.getById(courseId);
   }
 
+  @Cacheable("CourseList")
   public List<Course> getCoursesForUser(Long userId) {
     log.info("Retrieving courses for user {}", userId);
     Set<Long> courseIds = userRepository.getCoursesIds(userId);

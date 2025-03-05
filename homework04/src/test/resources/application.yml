@@ -11,3 +11,7 @@ logging:
     me:
       vladislav:
         homework: DEBUG
+
+cache:
+  expire-after-seconds: 300
+  initial-capacity: 30

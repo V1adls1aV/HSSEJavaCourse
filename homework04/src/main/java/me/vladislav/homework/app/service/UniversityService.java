@@ -7,6 +7,7 @@ import me.vladislav.homework.app.db.repository.user.UserRepository;
 import me.vladislav.homework.app.dto.api.request.UniversityCreateRequest;
 import me.vladislav.homework.app.dto.service.University;
 import me.vladislav.homework.app.dto.service.UniversityData;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class UniversityService {
     log.info("Successfully added university for user {}", userId);
   }
 
+  @Cacheable("UniversityList")
   public List<University> getUniversitiesForUser(Long userId) {
     log.info("Retrieving universities for user {}", userId);
     Set<Long> universityIds = userRepository.getUniversitiesIds(userId);
