@@ -18,8 +18,8 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doAnswer;
 
 @TestConfiguration
-public class TestConfig {
-  private static final Logger log = LoggerFactory.getLogger(TestConfig.class);
+public class TestMockitoConfig {
+  private static final Logger log = LoggerFactory.getLogger(TestMockitoConfig.class);
 
   @Bean
   @Primary

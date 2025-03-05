@@ -1,7 +1,7 @@
 package me.vladislav.homework.app;
 
 import jakarta.annotation.PostConstruct;
-import me.vladislav.homework.app.config.TestConfig;
+import me.vladislav.homework.app.config.TestMockitoConfig;
 import me.vladislav.homework.app.db.repository.user.UserRepository;
 import me.vladislav.homework.app.dto.api.request.CourseCreateRequest;
 import me.vladislav.homework.app.dto.api.request.CoursePatchRequest;
@@ -35,7 +35,7 @@ import static org.mockito.Mockito.verify;
  * Tests full course's lifespan separately.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Import(TestConfig.class)
+@Import(TestMockitoConfig.class)
 public class CourseE2ETest {
   @Autowired
   private TestRestTemplate restTemplate;
