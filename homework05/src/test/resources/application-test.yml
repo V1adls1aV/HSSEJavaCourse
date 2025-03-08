@@ -2,13 +2,11 @@
 spring:
   application:
     name: homework-test
+  flyway:
+    enabled: false
 
 server:
   port: 0  # Random port for testing
-  tomcat:
-    threads:
-      min-spare: 10
-      max: 50
 
 logging:
   level:
@@ -16,6 +14,4 @@ logging:
       vladislav:
         homework: DEBUG
 
-cache:
-  expire-after-seconds: 300
-  initial-capacity: 30
+

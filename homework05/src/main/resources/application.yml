@@ -1,5 +1,16 @@
 # Application Configuration
 spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/homework
+    username: CleverOne
+    password: compl3xNstrong
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      ddl-auto: validate
   application:
     name: homework
 
