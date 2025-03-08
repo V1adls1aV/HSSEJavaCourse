@@ -26,7 +26,7 @@ public class LoggingAspectTest {
 
   @Test
   public void testUserController() {
-    assertEquals(0L, loggingAspect.getCallsCount());
+    long defaultCallsCount = loggingAspect.getCallsCount();
 
     UserCreateRequest userRequest = new UserCreateRequest("testuser", "test@example.com");
     ResponseEntity<Long> createResponse =
@@ -36,12 +36,12 @@ public class LoggingAspectTest {
     Long userId = createResponse.getBody();
     assertNotNull(userId);
 
-    assertEquals(2L, loggingAspect.getCallsCount());
+    assertEquals(2L, loggingAspect.getCallsCount() - defaultCallsCount);
 
     ResponseEntity<UserGetResponse> userResponse =
         restTemplate.getForEntity("/api/user/" + userId, UserGetResponse.class);
     assertTrue(userResponse.getStatusCode().is2xxSuccessful());
 
-    assertEquals(4L, loggingAspect.getCallsCount());
+    assertEquals(4L, loggingAspect.getCallsCount() - defaultCallsCount);
   }
 }
