@@ -1,7 +1,7 @@
 package me.vladislav.homework.app.config;
 
-import me.vladislav.homework.app.db.repository.user.UserRepository;
-import me.vladislav.homework.app.dto.service.User;
+import me.vladislav.homework.app.db.repository.UserRepository;
+import me.vladislav.homework.app.db.orm.User;
 import me.vladislav.homework.app.dto.service.UserData;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ public class TestMockitoConfig {
     UserRepository spyRepository = Mockito.spy(UserRepository.class);
     Set<Long> courseIds = new ConcurrentSkipListSet<>();
 
-    // Mock create to always return ID 1
+    // Mock save to always return ID 1
     Mockito.when(spyRepository.create(any(UserData.class))).thenReturn(1L);
 
     // Mock getById to return fixed user

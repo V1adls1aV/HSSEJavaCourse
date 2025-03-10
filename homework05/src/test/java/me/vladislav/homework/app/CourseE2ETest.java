@@ -2,7 +2,7 @@ package me.vladislav.homework.app;
 
 import jakarta.annotation.PostConstruct;
 import me.vladislav.homework.app.config.TestMockitoConfig;
-import me.vladislav.homework.app.db.repository.user.UserRepository;
+import me.vladislav.homework.app.db.repository.UserRepository;
 import me.vladislav.homework.app.dto.api.request.CourseCreateRequest;
 import me.vladislav.homework.app.dto.api.request.CoursePatchRequest;
 import me.vladislav.homework.app.dto.api.request.CourseUpdateRequest;

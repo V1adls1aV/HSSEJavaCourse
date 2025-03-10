@@ -11,8 +11,10 @@ spring:
         format_sql: true
     hibernate:
       ddl-auto: validate
+    open-in-view: false
   application:
     name: homework
+
 
 logging:
   level:

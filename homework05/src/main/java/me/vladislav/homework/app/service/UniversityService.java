@@ -2,10 +2,10 @@ package me.vladislav.homework.app.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.vladislav.homework.app.db.repository.university.UniversityRepository;
-import me.vladislav.homework.app.db.repository.user.UserRepository;
+import me.vladislav.homework.app.db.repository.UniversityRepository;
+import me.vladislav.homework.app.db.repository.UserRepository;
 import me.vladislav.homework.app.dto.api.request.UniversityCreateRequest;
-import me.vladislav.homework.app.dto.service.University;
+import me.vladislav.homework.app.db.orm.University;
 import me.vladislav.homework.app.dto.service.UniversityData;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;

@@ -3,12 +3,12 @@ package me.vladislav.homework.app.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.vladislav.homework.app.core.exception.db.repository.BookNotFoundException;
-import me.vladislav.homework.app.db.repository.book.BookRepository;
-import me.vladislav.homework.app.db.repository.user.UserRepository;
+import me.vladislav.homework.app.db.repository.BookRepository;
+import me.vladislav.homework.app.db.repository.UserRepository;
 import me.vladislav.homework.app.dto.api.request.BookCreateRequest;
 import me.vladislav.homework.app.dto.api.request.BookPatchRequest;
 import me.vladislav.homework.app.dto.api.request.BookUpdateRequest;
-import me.vladislav.homework.app.dto.service.Book;
+import me.vladislav.homework.app.db.orm.Book;
 import me.vladislav.homework.app.dto.service.BookData;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.retry.annotation.Backoff;
@@ -29,7 +29,7 @@ public class BookService {
 
   public Book addNewBookForUser(Long userId, BookCreateRequest book) {
     log.info("Adding new book '{}' by {} for user {}", book.title(), book.author(), userId);
-    Book newBook = bookRepository.create(new BookData(book.title(), book.author()));
+    Book newBook = bookRepository.save(new BookData(book.title(), book.author()));
     userRepository.addBookId(userId, newBook.id());
     log.info("Successfully added book with id {} for user {}", newBook.id(), userId);
     return newBook;
@@ -59,7 +59,7 @@ public class BookService {
     log.info("Updating book {} for user {}", bookRequest.id(), userId);
     Book book = new Book(bookRequest.id(), bookRequest.title(), bookRequest.author());
     Book updatedBook =
-        bookRepository.update(book).orElse(bookRepository.create(book.getBookData()));
+        bookRepository.update(book).orElse(bookRepository.save(book.getBookData()));
     log.info("Successfully updated book {} for user {}", book.id(), userId);
     return updatedBook;
   }

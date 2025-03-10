@@ -8,7 +8,7 @@ import me.vladislav.homework.app.dto.api.request.CourseCreateRequest;
 import me.vladislav.homework.app.dto.api.request.CoursePatchRequest;
 import me.vladislav.homework.app.dto.api.request.CourseUpdateRequest;
 import me.vladislav.homework.app.dto.api.response.CourseGetResponse;
-import me.vladislav.homework.app.dto.service.Course;
+import me.vladislav.homework.app.db.orm.Course;
 import me.vladislav.homework.app.service.CourseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
