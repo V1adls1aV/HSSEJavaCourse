@@ -1,14 +1,6 @@
 package me.vladislav.homework.app.api.route;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.concurrent.CompletableFuture;
 import me.vladislav.homework.app.core.exception.db.repository.UserNotFoundException;
 import me.vladislav.homework.app.dto.api.request.UserCreateRequest;
 import me.vladislav.homework.app.service.UserService;
@@ -22,17 +14,29 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.concurrent.CompletableFuture;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @WebMvcTest(
     controllers = UserController.class,
     excludeAutoConfiguration = {DataSourceAutoConfiguration.class, SecurityAutoConfiguration.class})
 @ActiveProfiles("test")
 class UserControllerTest {
 
-  @Autowired private MockMvc mockMvc;
+  @Autowired
+  private MockMvc mockMvc;
 
-  @Autowired private ObjectMapper objectMapper;
+  @Autowired
+  private ObjectMapper objectMapper;
 
-  @MockBean private UserService userService;
+  @MockBean
+  private UserService userService;
 
   @Test
   void createUserSuccessfully() throws Exception {

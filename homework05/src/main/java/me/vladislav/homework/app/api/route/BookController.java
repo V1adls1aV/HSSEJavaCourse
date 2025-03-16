@@ -34,7 +34,7 @@ public class BookController implements BookControllerAnnotation {
       return ResponseEntity.status(HttpStatus.OK)
           .body(
               bookService.getBooksForUser(userId).stream()
-                  .map(book -> new BookGetResponse(book.id(), book.title(), book.author()))
+                  .map(book -> new BookGetResponse(book.getId(), book.getTitle(), book.getAuthor()))
                   .collect(Collectors.toList()));
     });
   }
@@ -44,7 +44,7 @@ public class BookController implements BookControllerAnnotation {
     return circuitBreaker.executeSupplier(() -> {
       var createdBook = bookService.addNewBookForUser(userId, book);
       return ResponseEntity.status(HttpStatus.CREATED)
-          .body(new BookGetResponse(createdBook.id(), createdBook.title(), createdBook.author()));
+          .body(new BookGetResponse(createdBook.getId(), createdBook.getTitle(), createdBook.getAuthor()));
     });
   }
 
@@ -53,7 +53,7 @@ public class BookController implements BookControllerAnnotation {
     return circuitBreaker.executeSupplier(() -> {
       var updatedBook = bookService.updateBookForUser(userId, book);
       return ResponseEntity.status(HttpStatus.OK)
-          .body(new BookGetResponse(updatedBook.id(), updatedBook.title(), updatedBook.author()));
+          .body(new BookGetResponse(updatedBook.getId(), updatedBook.getTitle(), updatedBook.getAuthor()));
     });
   }
 
@@ -63,7 +63,7 @@ public class BookController implements BookControllerAnnotation {
     return circuitBreaker.executeSupplier(() -> {
       var updatedBook = bookService.partiallyUpdateBookForUser(userId, book);
       return ResponseEntity.status(HttpStatus.OK)
-          .body(new BookGetResponse(updatedBook.id(), updatedBook.title(), updatedBook.author()));
+          .body(new BookGetResponse(updatedBook.getId(), updatedBook.getTitle(), updatedBook.getAuthor()));
     });
   }
 
@@ -72,7 +72,7 @@ public class BookController implements BookControllerAnnotation {
     return circuitBreaker.executeSupplier(() -> {
       var deletedBook = bookService.deleteBookForUser(userId, bookId);
       return ResponseEntity.status(HttpStatus.OK)
-          .body(new BookGetResponse(deletedBook.id(), deletedBook.title(), deletedBook.author()));
+          .body(new BookGetResponse(deletedBook.getId(), deletedBook.getTitle(), deletedBook.getAuthor()));
     });
   }
 }

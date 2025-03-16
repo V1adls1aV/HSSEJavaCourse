@@ -33,7 +33,7 @@ public class UserController implements UserControllerAnnotation {
     try {
       var user = userService.getUserById(userId).get();
       return ResponseEntity.status(HttpStatus.OK)
-          .body(new UserGetResponse(user.id(), user.username(), user.email()));
+          .body(new UserGetResponse(user.getId(), user.getUsername(), user.getEmail()));
     } catch (ExecutionException e) {
       if (e.getCause() instanceof UserNotFoundException) {
         throw (UserNotFoundException) e.getCause();

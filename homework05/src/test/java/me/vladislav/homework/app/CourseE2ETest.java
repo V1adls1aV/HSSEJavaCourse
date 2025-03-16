@@ -1,20 +1,17 @@
 package me.vladislav.homework.app;
 
 import jakarta.annotation.PostConstruct;
-import me.vladislav.homework.app.config.TestMockitoConfig;
 import me.vladislav.homework.app.db.repository.UserRepository;
 import me.vladislav.homework.app.dto.api.request.CourseCreateRequest;
 import me.vladislav.homework.app.dto.api.request.CoursePatchRequest;
 import me.vladislav.homework.app.dto.api.request.CourseUpdateRequest;
 import me.vladislav.homework.app.dto.api.request.UserCreateRequest;
 import me.vladislav.homework.app.dto.api.response.CourseGetResponse;
-import me.vladislav.homework.app.dto.service.UserData;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -29,15 +26,12 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 
 /**
  * Tests full course's lifespan separately.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-@Import(TestMockitoConfig.class)
 public class CourseE2ETest {
   @Autowired
   private TestRestTemplate restTemplate;
@@ -60,9 +54,6 @@ public class CourseE2ETest {
     Long userId = createUserResponse.getBody();
     assertNotNull(userId);
     assertEquals(1L, userId);
-
-    // Verify that spy was called
-    verify(userRepository).create(any(UserData.class));
 
     // Create a course
     CourseCreateRequest createRequest =

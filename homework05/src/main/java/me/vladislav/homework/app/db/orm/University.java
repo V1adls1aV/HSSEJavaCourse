@@ -7,7 +7,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.HashSet;
@@ -16,7 +15,6 @@ import java.util.Set;
 @Entity
 @Table(name = "universities")
 @Data
-@AllArgsConstructor
 public class University {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +34,16 @@ public class University {
   @ManyToMany(mappedBy = "universities")
   private Set<User> users = new HashSet<>();
 
-  protected University() {}
+  protected University() {
+  }
+
+  public University(Long id, String name, String city, String description, Integer rateKrutosty) {
+    this.id = id;
+    this.name = name;
+    this.city = city;
+    this.description = description;
+    this.rateKrutosty = rateKrutosty;
+  }
 
   @Override
   public boolean equals(Object o) {

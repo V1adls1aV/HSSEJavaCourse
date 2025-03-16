@@ -7,7 +7,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -16,7 +15,6 @@ import java.util.List;
 @Entity
 @Table(name = "books")
 @Data
-@AllArgsConstructor
 public class Book {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +30,12 @@ public class Book {
   private List<User> users = new ArrayList<>();
 
   protected Book() {
+  }
+
+  public Book(Long id, String title, String author) {
+    this.id = id;
+    this.title = title;
+    this.author = author;
   }
 
   @Override

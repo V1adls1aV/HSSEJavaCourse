@@ -42,11 +42,11 @@ public class UniversityController implements UniversityControllerAnnotation {
                   .map(
                       university ->
                           new UniversityGetResponse(
-                              university.id(),
-                              university.name(),
-                              university.city(),
-                              university.description(),
-                              university.rateKrutosty()))
+                              university.getId(),
+                              university.getName(),
+                              university.getCity(),
+                              university.getDescription(),
+                              university.getRateKrutosty()))
                   .collect(Collectors.toList()));
     });
   }
