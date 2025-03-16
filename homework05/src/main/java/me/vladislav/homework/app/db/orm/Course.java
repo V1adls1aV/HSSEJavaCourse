@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.HashSet;
@@ -15,6 +16,7 @@ import java.util.Set;
 @Entity
 @Table(name = "courses")
 @Data
+@AllArgsConstructor
 public class Course {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

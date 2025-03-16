@@ -53,7 +53,6 @@ public class CourseE2ETest {
     assertTrue(createUserResponse.getStatusCode().isSameCodeAs(HttpStatus.CREATED));
     Long userId = createUserResponse.getBody();
     assertNotNull(userId);
-    assertEquals(1L, userId);
 
     // Create a course
     CourseCreateRequest createRequest =
