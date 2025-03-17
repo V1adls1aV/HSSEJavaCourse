@@ -1,5 +1,9 @@
 # Test Application Configuration
 spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/homework
+    username: CleverOne
+    password: compl3xNstrong
   application:
     name: homework-test
   flyway:

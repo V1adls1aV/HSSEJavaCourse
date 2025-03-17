@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -25,10 +26,11 @@ public class UniversityService {
   @Transactional
   public void addNewUniversityForUser(Long userId, UniversityCreateRequest university) {
     log.info("Adding new university for user {}", userId);
-    University newUniversity = new University(null, university.name(),
-        university.city(), university.description(), university.rateKrutosty());
 
     User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    University newUniversity = new University(null, university.name(),
+        university.city(), university.description(), university.rateKrutosty(), user);
+
     user.getUniversities().add(newUniversity);
 
     log.info("Successfully added university for user {}", userId);
@@ -38,8 +40,8 @@ public class UniversityService {
   @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
   public List<University> getUniversitiesForUser(Long userId) {
     log.info("Retrieving universities for user {}", userId);
-    User user = userRepository.findUserWithUniversities(userId).orElseThrow(UserNotFoundException::new);
+    Set<University> universities = universityRepository.findByUserId(userId);
     log.info("Successfully retrieved universities for user {}", userId);
-    return user.getUniversities().stream().toList();
+    return universities.stream().toList();
   }
 }

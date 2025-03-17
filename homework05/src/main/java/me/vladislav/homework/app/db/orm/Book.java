@@ -4,14 +4,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "books")
@@ -28,16 +26,10 @@ public class Book {
   @NotNull
   private String author;
 
-  @ManyToMany(mappedBy = "books")
-  private List<User> users = new ArrayList<>();
+  @ManyToOne
+  private User user;
 
   protected Book() {
-  }
-
-  public Book(Long id, String title, String author) {
-    this.id = id;
-    this.title = title;
-    this.author = author;
   }
 
   @Override

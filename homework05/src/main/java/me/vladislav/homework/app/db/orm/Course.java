@@ -4,14 +4,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "courses")
@@ -32,18 +29,10 @@ public class Course {
 
   private Integer duration;
 
-  @ManyToMany(mappedBy = "courses")
-  private Set<User> users = new HashSet<>();
+  @ManyToOne
+  private User user;
 
   protected Course() {
-  }
-
-  public Course(Long id, String title, String author, String description, Integer duration) {
-    this.id = id;
-    this.title = title;
-    this.author = author;
-    this.description = description;
-    this.duration = duration;
   }
 
   @Override

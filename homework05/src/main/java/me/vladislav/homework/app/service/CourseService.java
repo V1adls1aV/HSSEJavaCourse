@@ -41,7 +41,7 @@ public class CourseService {
     if (processedIds.add(course.operationId())) {
       User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
-      Course savedCourse = new Course(null, course.title(), course.author(), course.description(), course.duration());
+      Course savedCourse = new Course(null, course.title(), course.author(), course.description(), course.duration(), user);
       user.getCourses().add(savedCourse);
 
       log.info("Successfully added course with id {} for user {}", savedCourse.getId(), userId);
@@ -55,20 +55,21 @@ public class CourseService {
   public List<Course> getCoursesForUser(Long userId) {
     log.info("Retrieving courses for user {}", userId);
 
-    User user = userRepository.findUserWithCourses(userId).orElseThrow(UserNotFoundException::new);
+    Set<Course> courses = courseRepository.findByUserId(userId);
 
-    log.info("Successfully retrieved {} courses for user {}", user.getCourses().size(), userId);
-    return user.getCourses().stream().toList();
+    log.info("Successfully retrieved {} courses for user {}", courses.size(), userId);
+    return courses.stream().toList();
   }
 
   @Transactional
   public Course updateCourseForUser(Long userId, CourseUpdateRequest courseRequest) {
     log.info("Updating course {} for user {}", courseRequest.id(), userId);
 
+    User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     Course course = courseRepository.save(
         new Course(
             courseRequest.id(), courseRequest.title(), courseRequest.author(),
-            courseRequest.description(), courseRequest.duration()
+            courseRequest.description(), courseRequest.duration(), user
         )
     );
 

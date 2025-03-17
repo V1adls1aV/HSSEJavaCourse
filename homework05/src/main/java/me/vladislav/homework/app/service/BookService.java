@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -30,10 +31,11 @@ public class BookService {
   @Transactional
   public Book addNewBookForUser(Long userId, BookCreateRequest book) {
     log.info("Adding new book '{}' by {} for user {}", book.title(), book.author(), userId);
-    Book newBook = new Book(null, book.title(), book.author());
 
-    User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-    user.getBooks().add(newBook);
+//    User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    Book newBook = new Book(null, book.title(), book.author(), new User(userId, null, null));
+//    user.getBooks().add(newBook);
+    newBook = bookRepository.save(newBook);
 
     log.info("Successfully added book with id {} for user {}", newBook.getId(), userId);
     return newBook;
@@ -44,10 +46,10 @@ public class BookService {
   public List<Book> getBooksForUser(Long userId) {
     log.info("Retrieving books for user {}", userId);
 
-    User user = userRepository.findUserWithBooks(userId).orElseThrow(UserNotFoundException::new);
+    Set<Book> books = bookRepository.findByUserId(userId);
 
-    log.info("Found {} books for user {}", user.getBooks().size(), userId);
-    return user.getBooks();
+    log.info("Found {} books for user {}", books.size(), userId);
+    return books.stream().toList();
   }
 
   /*
@@ -59,7 +61,10 @@ public class BookService {
   @Transactional
   public Book updateBookForUser(Long userId, BookUpdateRequest bookRequest) {
     log.info("Updating book {} for user {}", bookRequest.id(), userId);
-    Book updatedBook = bookRepository.save(new Book(bookRequest.id(), bookRequest.title(), bookRequest.author()));
+
+    User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    Book updatedBook = bookRepository.save(new Book(bookRequest.id(), bookRequest.title(), bookRequest.author(), user));
+
     log.info("Successfully updated book {} for user {}", updatedBook.getId(), userId);
     return updatedBook;
   }
