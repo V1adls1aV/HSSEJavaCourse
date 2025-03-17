@@ -1,6 +1,7 @@
-package me.vladislav.homework.app.api.route;
+package me.vladislav.homework.app.e2e.api.route;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import me.vladislav.homework.app.api.route.UserController;
 import me.vladislav.homework.app.core.exception.db.repository.UserNotFoundException;
 import me.vladislav.homework.app.dto.api.request.UserCreateRequest;
 import me.vladislav.homework.app.service.UserService;

@@ -1,6 +1,7 @@
-package me.vladislav.homework.app;
+package me.vladislav.homework.app.e2e;
 
 import jakarta.annotation.PostConstruct;
+import me.vladislav.homework.app.TestContainersConfig;
 import me.vladislav.homework.app.db.repository.UserRepository;
 import me.vladislav.homework.app.dto.api.request.CourseCreateRequest;
 import me.vladislav.homework.app.dto.api.request.CoursePatchRequest;
@@ -32,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-public class CourseE2ETest {
+public class CourseE2ETest extends TestContainersConfig {
   @Autowired
   private TestRestTemplate restTemplate;
 

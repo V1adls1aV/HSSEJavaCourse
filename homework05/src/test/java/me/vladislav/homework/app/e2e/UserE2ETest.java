@@ -1,36 +1,38 @@
-package me.vladislav.homework.app.core.aspect;
+package me.vladislav.homework.app.e2e;
 
+import jakarta.annotation.PostConstruct;
+import me.vladislav.homework.app.TestContainersConfig;
 import me.vladislav.homework.app.dto.api.request.UserCreateRequest;
 import me.vladislav.homework.app.dto.api.response.UserGetResponse;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
-public class LoggingAspectTest {
+public class UserE2ETest extends TestContainersConfig {
+
   @Autowired
   private TestRestTemplate restTemplate;
 
-  @Autowired
-  private LoggingAspect loggingAspect;
+  @PostConstruct
+  public void setUp() {
+    restTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+  }
 
   @Test
-  public void testUserController() {
-    long defaultCallsCount = loggingAspect.getCallsCount();
-
+  public void testCreateAndGetUser() {
     UserCreateRequest userRequest = new UserCreateRequest("testuser", "test@example.com");
+
     ResponseEntity<Long> createResponse =
         restTemplate.postForEntity("/api/user", userRequest, Long.class);
 
@@ -38,12 +40,20 @@ public class LoggingAspectTest {
     Long userId = createResponse.getBody();
     assertNotNull(userId);
 
-    assertEquals(2L, loggingAspect.getCallsCount() - defaultCallsCount);
-
-    ResponseEntity<UserGetResponse> userResponse =
+    ResponseEntity<UserGetResponse> getResponse =
         restTemplate.getForEntity("/api/user/" + userId, UserGetResponse.class);
-    assertTrue(userResponse.getStatusCode().is2xxSuccessful());
 
-    assertEquals(4L, loggingAspect.getCallsCount() - defaultCallsCount);
+    assertTrue(getResponse.getStatusCode().is2xxSuccessful());
+    UserGetResponse user = getResponse.getBody();
+    assertNotNull(user);
+    assertEquals(userRequest.username(), user.username());
+    assertEquals(userRequest.email(), user.email());
+  }
+
+  @Test
+  public void testGetNonExistentUserReturns404() {
+    ResponseEntity<String> response =
+        restTemplate.getForEntity("/api/user/812", String.class);
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
   }
 }
