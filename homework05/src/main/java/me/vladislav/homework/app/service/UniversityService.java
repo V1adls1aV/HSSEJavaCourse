@@ -2,7 +2,6 @@ package me.vladislav.homework.app.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.vladislav.homework.app.core.exception.db.repository.UserNotFoundException;
 import me.vladislav.homework.app.db.orm.University;
 import me.vladislav.homework.app.db.orm.User;
 import me.vladislav.homework.app.db.repository.UniversityRepository;
@@ -27,11 +26,9 @@ public class UniversityService {
   public void addNewUniversityForUser(Long userId, UniversityCreateRequest university) {
     log.info("Adding new university for user {}", userId);
 
-    User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-    University newUniversity = new University(null, university.name(),
-        university.city(), university.description(), university.rateKrutosty(), user);
-
-    user.getUniversities().add(newUniversity);
+    University newUniversity = universityRepository.save(
+        new University(null, university.name(), university.city(),
+            university.description(), university.rateKrutosty(), new User(userId)));
 
     log.info("Successfully added university for user {}", userId);
   }

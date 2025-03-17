@@ -1,6 +1,7 @@
 package me.vladislav.homework.app.db.orm;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -30,7 +31,7 @@ public class University {
   @NotNull
   private Integer rateKrutosty;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   private User user;
 
   protected University() {

@@ -3,7 +3,6 @@ package me.vladislav.homework.app.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.vladislav.homework.app.core.exception.db.repository.BookNotFoundException;
-import me.vladislav.homework.app.core.exception.db.repository.UserNotFoundException;
 import me.vladislav.homework.app.db.orm.Book;
 import me.vladislav.homework.app.db.orm.User;
 import me.vladislav.homework.app.db.repository.BookRepository;
@@ -32,10 +31,7 @@ public class BookService {
   public Book addNewBookForUser(Long userId, BookCreateRequest book) {
     log.info("Adding new book '{}' by {} for user {}", book.title(), book.author(), userId);
 
-//    User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-    Book newBook = new Book(null, book.title(), book.author(), new User(userId, null, null));
-//    user.getBooks().add(newBook);
-    newBook = bookRepository.save(newBook);
+    Book newBook = bookRepository.save(new Book(null, book.title(), book.author(), new User(userId)));
 
     log.info("Successfully added book with id {} for user {}", newBook.getId(), userId);
     return newBook;
@@ -62,8 +58,9 @@ public class BookService {
   public Book updateBookForUser(Long userId, BookUpdateRequest bookRequest) {
     log.info("Updating book {} for user {}", bookRequest.id(), userId);
 
-    User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-    Book updatedBook = bookRepository.save(new Book(bookRequest.id(), bookRequest.title(), bookRequest.author(), user));
+    Book updatedBook = bookRepository.save(
+        new Book(bookRequest.id(), bookRequest.title(), bookRequest.author(),
+            new User(userId, null, null)));
 
     log.info("Successfully updated book {} for user {}", updatedBook.getId(), userId);
     return updatedBook;
@@ -73,13 +70,10 @@ public class BookService {
   @Transactional
   public Book partiallyUpdateBookForUser(Long userId, BookPatchRequest bookRequest) {
     log.info("Partially updating book {} for user {}", bookRequest.id(), userId);
-    Book existingBook =
-        bookRepository.findById(bookRequest.id()).orElseThrow(BookNotFoundException::new);
+    Book existingBook = bookRepository.findById(bookRequest.id()).orElseThrow(BookNotFoundException::new);
 
-    if (bookRequest.title() != null)
-      existingBook.setTitle(bookRequest.title());
-    if (bookRequest.author() != null)
-      existingBook.setAuthor(bookRequest.author());
+    if (bookRequest.title() != null) existingBook.setTitle(bookRequest.title());
+    if (bookRequest.author() != null) existingBook.setAuthor(bookRequest.author());
 
     Book updatedBook = bookRepository.save(existingBook);
     log.info("Successfully partially updated book {} for user {}", updatedBook.getId(), userId);

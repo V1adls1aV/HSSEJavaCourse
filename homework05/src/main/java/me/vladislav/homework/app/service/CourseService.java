@@ -39,10 +39,8 @@ public class CourseService {
     log.info("Adding new course for user {}", userId);
 
     if (processedIds.add(course.operationId())) {
-      User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
-      Course savedCourse = new Course(null, course.title(), course.author(), course.description(), course.duration(), user);
-      user.getCourses().add(savedCourse);
+      Course savedCourse = courseRepository.save(new Course(null, course.title(), course.author(), course.description(), course.duration(), new User(userId)));
 
       log.info("Successfully added course with id {} for user {}", savedCourse.getId(), userId);
       return Optional.of(savedCourse);
@@ -65,11 +63,10 @@ public class CourseService {
   public Course updateCourseForUser(Long userId, CourseUpdateRequest courseRequest) {
     log.info("Updating course {} for user {}", courseRequest.id(), userId);
 
-    User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     Course course = courseRepository.save(
         new Course(
             courseRequest.id(), courseRequest.title(), courseRequest.author(),
-            courseRequest.description(), courseRequest.duration(), user
+            courseRequest.description(), courseRequest.duration(), new User(userId)
         )
     );
 

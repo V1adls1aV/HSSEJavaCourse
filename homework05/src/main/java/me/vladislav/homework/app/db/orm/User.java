@@ -32,16 +32,20 @@ public class User {
   @NotNull
   private String email;
 
-  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true, cascade = {CascadeType.PERSIST})
+  @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = {CascadeType.PERSIST})
   private List<Book> books = new ArrayList<>();
 
-  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true, cascade = {CascadeType.PERSIST})
+  @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = {CascadeType.PERSIST})
   private Set<Course> courses = new HashSet<>();
 
-  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true, cascade = {CascadeType.PERSIST})
+  @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = {CascadeType.PERSIST})
   private Set<University> universities = new HashSet<>();
 
   protected User() {
+  }
+
+  public User(Long id) {
+    this.id = id;
   }
 
   public User(Long id, String username, String email) {
