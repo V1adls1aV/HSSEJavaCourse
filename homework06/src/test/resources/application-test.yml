@@ -1,0 +1,19 @@
+# Test Application Configuration
+spring:
+  application:
+    name: homework-test
+
+  cassandra:
+    local-datacenter: datacenter1
+    contact-points: 127.0.0.1
+    port: 9042
+    keyspace-name: homework_keyspace
+
+server:
+  port: 0  # Random port for testing
+
+logging:
+  level:
+    me:
+      vladislav:
+        homework: DEBUG

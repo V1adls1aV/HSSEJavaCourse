@@ -1,0 +1,32 @@
+# Application Configuration
+spring:
+  application:
+    name: homework
+
+  cassandra:
+    local-datacenter: datacenter1
+    contact-points: 127.0.0.1
+    port: 9042
+    keyspace-name: homework_keyspace
+
+logging:
+  level:
+    me:
+      vladislav:
+        homework: INFO
+
+# OpenAPI/Swagger Configuration
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    use-root-path: true  # Wow, it's nice :)
+    operationsSorter: method
+    tagsSorter: alpha
+
+server:
+  tomcat:
+    threads:
+      min-spare: 10
+      max: 50
