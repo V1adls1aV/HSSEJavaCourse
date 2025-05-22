@@ -1,0 +1,21 @@
+# Test Application Configuration
+spring:
+  application:
+    name: homework-test
+
+  cassandra:
+    local-datacenter: ${spring.cassandra.local-datacenter}
+    contact-points: ${spring.cassandra.contact-points}
+    port: ${spring.cassandra.port}
+    keyspace-name: ${spring.cassandra.keyspace-name}
+
+server:
+  port: 0  # Random port for testing
+
+logging:
+  level:
+    me:
+      vladislav:
+        homework: DEBUG
+    org.springframework.data.cassandra: DEBUG
+    com.datastax.oss.driver: DEBUG
