@@ -35,8 +35,8 @@ public class TestUserAuditRepository {
 
   @Test
   public void testSaveAndLoadAudit() {
-    LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault()).withNano(0); // Remove nanoseconds for consistency
-    UserAuditKey userAuditKey = new UserAuditKey(1L, now);
+    LocalDateTime fixedTime = LocalDateTime.of(2025, 5, 22, 17, 41, 57, 0);
+    UserAuditKey userAuditKey = new UserAuditKey(1L, fixedTime);
     UserAudit audit = new UserAudit(userAuditKey, "CREATE", "User was created");
 
     userAuditRepository.save(audit);
