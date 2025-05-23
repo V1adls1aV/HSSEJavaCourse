@@ -46,7 +46,14 @@ class AuditTest extends TestContainersConfig {
   }
 
   @Test
-  void shouldSendMessageToKafkaSuccessfully() {
+  void shouldSendMessageToKafkaSuccessfully() throws InterruptedException {
+    KafkaTestConsumer consumer =
+        new KafkaTestConsumer(KAFKA.getBootstrapServers(), "homework-group");
+    consumer.subscribe(List.of(topic));
+
+    // Shift the offset (to track the exact count of records produced)
+    consumer.poll();
+
     // Create a user first
     UserCreateRequest userRequest = new UserCreateRequest("bookuser", "books@test.com");
     ResponseEntity<Long> createUserResponse =
@@ -63,27 +70,29 @@ class AuditTest extends TestContainersConfig {
     assertTrue(createBookResponse.getStatusCode().isSameCodeAs(HttpStatus.CREATED));
 
     // Check the message sent
-    KafkaTestConsumer consumer =
-        new KafkaTestConsumer(KAFKA.getBootstrapServers(), "homework-group");
-    consumer.subscribe(List.of(topic));
-
-    ConsumerRecords<String, String> records = consumer.poll();
-
-    // One is for creating a user, and the second – for creating a book.
-    Assertions.assertEquals(2, records.count());
-
     List<UserAuditData> messages = new ArrayList<>();
-    for (ConsumerRecord<String, String> record : records) {
-      try {
-        UserAuditData message = objectMapper.readValue(record.value(), UserAuditData.class);
-        messages.add(message);
+    for (int i = 0; i < 5; i++) {
+      // Read all present records, step by step
+      ConsumerRecords<String, String> records = consumer.poll();
 
-        Assertions.assertEquals(userId, message.userId());
-        Assertions.assertEquals(OperationType.CREATE, message.operationType());
-      } catch (JsonProcessingException e) {
-        throw new RuntimeException(e);
+      for (ConsumerRecord<String, String> record : records) {
+        try {
+          UserAuditData message = objectMapper.readValue(record.value(), UserAuditData.class);
+          messages.add(message);
+        } catch (JsonProcessingException e) {
+          throw new RuntimeException(e);
+        }
       }
     }
+
+    // One is for creating a user, and the second – for creating a book.
+    Assertions.assertEquals(2, messages.size());
+
+    Assertions.assertEquals(userId, messages.get(0).userId());
+    Assertions.assertEquals(userId, messages.get(1).userId());
+
+    Assertions.assertEquals(OperationType.CREATE, messages.get(0).operationType());
+    Assertions.assertEquals(OperationType.CREATE, messages.get(1).operationType());
 
     assertTrue(messages.get(0).performTime().isBefore(messages.get(1).performTime()));
     assertTrue(messages.get(0).detail().contains("Successfully created user with id"));

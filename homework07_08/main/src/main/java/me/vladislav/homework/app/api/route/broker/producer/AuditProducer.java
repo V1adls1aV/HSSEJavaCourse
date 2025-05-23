@@ -30,6 +30,7 @@ public class AuditProducer {
       return;
     }
 
-    CompletableFuture<SendResult<String, String>> sendResult = kafkaTemplate.send(topic, message);
+    CompletableFuture<SendResult<String, String>> sendResult =
+        kafkaTemplate.send(topic, messageDto.userId().toString(), message);
   }
 }
