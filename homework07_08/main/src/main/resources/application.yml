@@ -1,0 +1,90 @@
+# Application Configuration
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/homework
+    username: CleverOne
+    password: compl3xNstrong
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  application:
+    name: homework
+
+  kafka:
+    bootstrap-servers: localhost:29093
+
+
+topic-to-send-message: homework-topic
+
+
+logging:
+  level:
+    me:
+      vladislav:
+        homework: INFO
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+        exclude: shutdown
+      base-path: /admin/actuator/
+  endpoint:
+    health:
+      show-details: always
+
+# OpenAPI/Swagger Configuration
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    use-root-path: true  # Wow, it's nice :)
+    operationsSorter: method
+    tagsSorter: alpha
+
+server:
+  tomcat:
+    threads:
+      min-spare: 10
+      max: 50
+
+cache:
+  expire-after-seconds: 300
+  initial-capacity: 30
+
+requests:
+  timeout: 2000
+
+resilience4j:
+  ratelimiter:
+    instances:
+      UniversityControllerRateLimiter:
+        limit-for-period: 5
+        limit-refresh-period: 5s
+        timeout-duration: 1s
+      CourseControllerRateLimiter:
+        limit-for-period: 5
+        limit-refresh-period: 5s
+        timeout-duration: 1s
+  circuitbreaker:
+    instances:
+      BookControllerCircuitBreaker:
+        failure-rate-threshold: 43
+        wait-duration-in-open-state: 20s
+        permitted-number-of-calls-in-half-open-state: 5
+        sliding-window-type: count_based
+        sliding-window-size: 20
+      CourseControllerCircuitBreaker:
+        failure-rate-threshold: 43
+        wait-duration-in-open-state: 20s
+        permitted-number-of-calls-in-half-open-state: 5
+        sliding-window-type: count_based
+        sliding-window-size: 20
