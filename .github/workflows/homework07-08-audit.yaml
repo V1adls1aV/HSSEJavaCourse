@@ -1,4 +1,4 @@
-name: Java CI
+name: Audit service CI
 
 on:
   push:

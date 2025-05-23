@@ -9,6 +9,16 @@ spring:
     port: 9042
     keyspace-name: homework_keyspace
 
+
+
+  kafka:
+    bootstrap-servers: localhost:29093
+    consumer:
+      group-id: homework-group
+      enable-auto-commit: true
+
+topic-to-consume-message: homework-topic
+
 logging:
   level:
     me:

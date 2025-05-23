@@ -1,18 +1,18 @@
 package me.vladislav.homework.app.service;
 
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import me.vladislav.homework.app.db.audit.entity.UserAudit;
 import me.vladislav.homework.app.db.audit.entity.UserAuditKey;
 import me.vladislav.homework.app.db.audit.repository.UserAuditRepository;
-import me.vladislav.homework.app.dto.service.OperationType;
-import me.vladislav.homework.app.dto.service.UserAuditData;
-import org.springframework.beans.factory.annotation.Autowired;
+import me.vladislav.homework.app.dto.OperationType;
+import me.vladislav.homework.app.dto.UserAuditData;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserAuditService {
-
-  @Autowired private UserAuditRepository userAuditRepository;
+  private UserAuditRepository userAuditRepository;
 
   public void recordUserAction(UserAuditData auditData) {
     UserAuditKey userAuditKey = new UserAuditKey(auditData.userId(), auditData.performTime());

@@ -15,6 +15,12 @@ spring:
   application:
     name: homework
 
+  kafka:
+    bootstrap-servers: localhost:29093
+
+
+topic-to-send-message: homework-topic
+
 
 logging:
   level:

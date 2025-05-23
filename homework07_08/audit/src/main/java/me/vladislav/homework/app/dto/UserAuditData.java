@@ -1,4 +1,4 @@
-package me.vladislav.homework.app.dto.service;
+package me.vladislav.homework.app.dto;
 
 import java.time.LocalDateTime;
 

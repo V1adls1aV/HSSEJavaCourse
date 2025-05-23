@@ -1,4 +1,4 @@
-name: Java CI
+name: Main service CI
 
 on:
   push:

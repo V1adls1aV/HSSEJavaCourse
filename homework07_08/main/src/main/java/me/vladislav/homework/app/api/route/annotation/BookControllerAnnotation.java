@@ -20,6 +20,7 @@ import java.util.List;
 @Tag(name = "Book management")
 public interface BookControllerAnnotation {
 
+
   @Operation(summary = "Get all books for user")
   @ApiResponse(
       responseCode = "200",
