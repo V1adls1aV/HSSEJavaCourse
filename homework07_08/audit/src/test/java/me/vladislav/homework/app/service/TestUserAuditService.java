@@ -1,5 +1,10 @@
 package me.vladislav.homework.app.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.time.LocalDateTime;
+import java.util.List;
 import me.vladislav.homework.app.TestContainersManager;
 import me.vladislav.homework.app.db.audit.entity.UserAudit;
 import me.vladislav.homework.app.db.audit.entity.UserAuditKey;
@@ -9,24 +14,18 @@ import me.vladislav.homework.app.dto.UserAuditData;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Testcontainers
 public class TestUserAuditService extends TestContainersManager {
 
   private final Long testUserId = 1L;
   private final Long nonExistentUserId = 999L;
 
-  @Autowired
-  private UserAuditRepository userAuditRepository;
+  @Autowired private UserAuditRepository userAuditRepository;
 
-  @Autowired
-  private UserAuditService userAuditService;
+  @Autowired private UserAuditService userAuditService;
 
   @Test
   public void testSaveAndLoadAuditUsingRepository() {
@@ -36,7 +35,9 @@ public class TestUserAuditService extends TestContainersManager {
 
     userAuditRepository.save(audit);
 
-    UserAudit newAudit = userAuditRepository.findByUserIdAndPerformTime(userAuditKey.getUserId(), userAuditKey.getPerformTime());
+    UserAudit newAudit =
+        userAuditRepository.findByUserIdAndPerformTime(
+            userAuditKey.getUserId(), userAuditKey.getPerformTime());
 
     assertEquals(audit.getKey(), newAudit.getKey());
     assertEquals(audit.getOperationType(), newAudit.getOperationType());
@@ -55,9 +56,20 @@ public class TestUserAuditService extends TestContainersManager {
     LocalDateTime now = LocalDateTime.now();
 
     // Shuffle saving order
-    userAuditService.recordUserAction(new UserAuditData(testUserId, now.minusHours(1), OperationType.CREATE, "Book with book_id=123 was created"));
-    userAuditService.recordUserAction(new UserAuditData(testUserId, now, OperationType.READ, "Book with book_id=123 was read"));
-    userAuditService.recordUserAction(new UserAuditData(testUserId, now.minusHours(2), OperationType.UPDATE, "Book with book_id=123 was modified"));
+    userAuditService.recordUserAction(
+        new UserAuditData(
+            testUserId,
+            now.minusHours(1),
+            OperationType.CREATE,
+            "Book with book_id=123 was created"));
+    userAuditService.recordUserAction(
+        new UserAuditData(testUserId, now, OperationType.READ, "Book with book_id=123 was read"));
+    userAuditService.recordUserAction(
+        new UserAuditData(
+            testUserId,
+            now.minusHours(2),
+            OperationType.UPDATE,
+            "Book with book_id=123 was modified"));
 
     // Test top 2
     List<UserAuditData> firstResult = userAuditService.getUserAuditData(testUserId, 2);
@@ -66,8 +78,15 @@ public class TestUserAuditService extends TestContainersManager {
     // Test top 4
     List<UserAuditData> secondResult = userAuditService.getUserAuditData(testUserId, 4);
     assertEquals(3, secondResult.size(), "Second query should have 3 records out of 4");
-    assertEquals(OperationType.READ, firstResult.get(0).operationType(), "First record was added last.");
-    assertEquals(OperationType.CREATE, firstResult.get(1).operationType(), "Second record was added 1 record before the last.");
-    assertEquals(OperationType.UPDATE, secondResult.get(2).operationType(), "Third record should be the oldest");
+    assertEquals(
+        OperationType.READ, firstResult.get(0).operationType(), "First record was added last.");
+    assertEquals(
+        OperationType.CREATE,
+        firstResult.get(1).operationType(),
+        "Second record was added 1 record before the last.");
+    assertEquals(
+        OperationType.UPDATE,
+        secondResult.get(2).operationType(),
+        "Third record should be the oldest");
   }
 }

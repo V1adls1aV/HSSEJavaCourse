@@ -46,7 +46,7 @@ class AuditTest extends TestContainersConfig {
   }
 
   @Test
-  void shouldSendMessageToKafkaSuccessfully() throws InterruptedException {
+  void shouldSendMessageToKafkaSuccessfully() {
     KafkaTestConsumer consumer =
         new KafkaTestConsumer(KAFKA.getBootstrapServers(), "homework-group");
     consumer.subscribe(List.of(topic));

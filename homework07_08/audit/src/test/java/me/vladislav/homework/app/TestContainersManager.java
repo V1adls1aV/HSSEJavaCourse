@@ -7,6 +7,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.containers.CassandraContainer;
 import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.lifecycle.Startables;
 import org.testcontainers.utility.DockerImageName;
@@ -18,11 +19,10 @@ public class TestContainersManager {
 
   protected static final CassandraContainer<?> CASSANDRA =
       new CassandraContainer<>("cassandra:4.1.9")
-          .withInitScript("init-cassandra.cql")
-          .withReuse(true);
+          .withInitScript("init-cassandra.cql");
 
   protected static final KafkaContainer KAFKA =
-      new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.4.0")).withReuse(true);
+      new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.4.0"));
 
   static class Initializer
       implements ApplicationContextInitializer<ConfigurableApplicationContext> {
