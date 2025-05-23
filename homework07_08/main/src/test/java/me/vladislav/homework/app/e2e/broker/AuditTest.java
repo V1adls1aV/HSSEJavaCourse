@@ -6,14 +6,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 import me.vladislav.homework.app.TestContainersConfig;
-import me.vladislav.homework.app.api.route.broker.producer.AuditProducer;
 import me.vladislav.homework.app.dto.api.request.BookCreateRequest;
 import me.vladislav.homework.app.dto.api.request.UserCreateRequest;
 import me.vladislav.homework.app.dto.api.response.BookGetResponse;
 import me.vladislav.homework.app.dto.broker.OperationType;
 import me.vladislav.homework.app.dto.broker.UserAuditData;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -21,17 +22,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-@SpringBootTest(classes = {AuditProducer.class, TestRestTemplate.class})
-@Import({KafkaAutoConfiguration.class, AuditTest.ObjectMapperTestConfig.class})
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Import({KafkaAutoConfiguration.class})
 @Testcontainers
 class AuditTest extends TestContainersConfig {
 
@@ -69,29 +68,25 @@ class AuditTest extends TestContainersConfig {
     consumer.subscribe(List.of(topic));
 
     ConsumerRecords<String, String> records = consumer.poll();
-    Assertions.assertEquals(1, records.count());
-    records
-        .iterator()
-        .forEachRemaining(
-            record -> {
-              UserAuditData message;
-              try {
-                message = objectMapper.readValue(record.value(), UserAuditData.class);
-              } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-              }
 
-              // Check the userId remained the same, operation type too.
-              Assertions.assertEquals(userId, message.userId());
-              Assertions.assertEquals(OperationType.CREATE, message.operationType());
-            });
-  }
+    // One is for creating a user, and the second – for creating a book.
+    Assertions.assertEquals(2, records.count());
 
-  @TestConfiguration
-  static class ObjectMapperTestConfig {
-    @Bean
-    public ObjectMapper objectMapper() {
-      return new ObjectMapper();
+    List<UserAuditData> messages = new ArrayList<>();
+    for (ConsumerRecord<String, String> record : records) {
+      try {
+        UserAuditData message = objectMapper.readValue(record.value(), UserAuditData.class);
+        messages.add(message);
+
+        Assertions.assertEquals(userId, message.userId());
+        Assertions.assertEquals(OperationType.CREATE, message.operationType());
+      } catch (JsonProcessingException e) {
+        throw new RuntimeException(e);
+      }
     }
+
+    assertTrue(messages.get(0).performTime().isBefore(messages.get(1).performTime()));
+    assertTrue(messages.get(0).detail().contains("Successfully created user with id"));
+    assertTrue(messages.get(1).detail().contains("Successfully added book for user"));
   }
 }

@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Tests whole user's flow. Creates user. Then, books, universities and courses for him. Then, checks the creation.
+ * Tests the whole user's flow. Creates user. Then, books, universities and courses for him. Then, checks the creation.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
