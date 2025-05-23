@@ -1,7 +1,7 @@
 package me.vladislav.homework.app.service;
 
 import java.util.List;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import me.vladislav.homework.app.db.audit.entity.UserAudit;
 import me.vladislav.homework.app.db.audit.entity.UserAuditKey;
 import me.vladislav.homework.app.db.audit.repository.UserAuditRepository;
@@ -10,7 +10,7 @@ import me.vladislav.homework.app.dto.UserAuditData;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class UserAuditService {
   private UserAuditRepository userAuditRepository;
 
