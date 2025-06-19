@@ -1,0 +1,24 @@
+# Test Application Configuration
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/homework
+    username: CleverOne
+    password: compl3xNstrong
+  jpa:
+    hibernate:
+      ddl-auto: create
+  application:
+    name: homework-test
+  flyway:
+    enabled: false
+
+server:
+  port: 0  # Random port for testing
+
+logging:
+  level:
+    me:
+      vladislav:
+        homework: DEBUG
+
+
