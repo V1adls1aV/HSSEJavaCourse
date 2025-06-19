@@ -1,0 +1,13 @@
+# Test Application Configuration
+spring:
+  application:
+    name: homework02-test
+
+server:
+  port: 0  # Random port for testing
+
+logging:
+  level:
+    me:
+      vladislav:
+        homework01: DEBUG
